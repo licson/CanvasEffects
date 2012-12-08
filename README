@@ -1,0 +1,13 @@
+CanvasEffects
+=============
+
+It is a little javascript library for you to add some effects on photos using HTML5 canvas
+
+Usage:
+
+1. Create a canvas element for your image first
+2. Initialize a new CanvasEffect context and pass the canvas element to the constructer
+3. Draw something on the canvas
+4. Run the effects provided by CanvasEffects
+
+You can find more details in the code.
