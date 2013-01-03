@@ -13,20 +13,11 @@ Usage:
 Effects provided
 ================
 
-> -greyscale
-
-> -sepia
-
-> -adjust hue, saturation and lightness
-
-> -custom convolution effect
-
-> - convolution presets:
-> -blur
-> -sharpen
-> -find edges
-> -highlight edges
-> -emboss
+ - greyscale
+ - sepia
+ - adjust hue,saturation and brightness
+ - custom convolution effects
+ - convolution effect presets
 
 You can find more details in the code.
 
