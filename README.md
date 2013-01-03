@@ -10,11 +10,18 @@ Usage:
 3. Draw something on the canvas
 4. Run the effects provided by CanvasEffects
 
-Effects provided:
+Effects provided
+================
+
 > -greyscale
+
 > -sepia
+
 > -adjust hue, saturation and lightness
+
 > -custom convolution effect
+
+> - convolution presets:
 > -blur
 > -sharpen
 > -find edges
