@@ -6,9 +6,9 @@ Features
 =============
  - Simple photo effects
    1. Greyscale
-   2. Threshold
-   3. Sepia
- - Adjustments
+   2. Threshold [(example)](http://licson0729.github.com/CanvasEffects/examples/threshold.html)
+   3. Sepia [(example)](http://licson0729.github.com/CanvasEffects/examples/sepia.html)
+ - Adjustments [(example)](http://licson0729.github.com/CanvasEffects/examples/adjustments.html)
    1. Brightness
    2. Contrast
    3. Gamma
@@ -16,7 +16,7 @@ Features
    5. Saturation
  - Convolution effects
    1. Custom _n*n_ convolution matrix
-   2. Box Blur
+   2. Box Blur [(example)](http://licson0729.github.com/CanvasEffects/examples/blur.html)
    3. Emboss
    4. Sharpen
    5. Find Edges
