@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>CanvasEffect.js threshold example</title>
+		<script src="../CanvasEffects.min.js"></script>
+		<script>
+		var fx;
+		
+		function $(selector){
+			return document.querySelector(selector);
+		};
+		
+		window.onload = function(){
+			fx = new CanvasEffects($('#pict'),{
+				workerPath:'../CanvasEffects.worker.min.js'
+			});
+			$('#level').addEventListener('change',function(){
+				fx.restore();
+				fx.threshold(this.value);
+			},false);
+			fx.load('pict.jpg');
+			
+			$('#save').addEventListener('click',function(){
+				window.open(fx.toDataURL());
+			},false);
+		};
+		</script>
+	</head>
+	
+	<body>
+		<canvas id="pict" width="670" height="503"></canvas>
+		<div>
+			Threshold: (Range 0 to 255)<input id="level" type="range" min="0" max="255" step="1" value="127"/>
+			<a href="#" id="save">Save</a>
+		</div>
+	</body>
+</html>
