@@ -4,22 +4,22 @@ It is a little javascript library for you to add some effects on photos using HT
 
 Features
 =============
- Simple photo effects
-  Greyscale
-  Threshold
-  Sepia
- Adjustments
-  Brightness
-  Contrast
-  Gamma
-  Hue
-  Saturation
- Convolution effects
-  Custom _n*n_ convolution matrix
-  Box Blur
-  Emboss
-  Sharpen
-  Find Edges
+ - Simple photo effects
+   1. Greyscale
+   2. Threshold
+   3. Sepia
+ - Adjustments
+   1. Brightness
+   2. Contrast
+   3. Gamma
+   4. Hue
+   5. Saturation
+ - Convolution effects
+   1. Custom _n*n_ convolution matrix
+   2. Box Blur
+   3. Emboss
+   4. Sharpen
+   5. Find Edges
 
 What's new
 ==============
