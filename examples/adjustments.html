@@ -36,6 +36,13 @@
 						return function(value){
 							fx.restore();
 							fx[i](value);
+						}
+				})(gui.__controllers[i].property));
+				
+				gui.__controllers[i].onFinishChange((function(i){
+						return function(value){
+							fx.restore();
+							fx[i](value);
 							fx.save();
 						}
 				})(gui.__controllers[i].property));
