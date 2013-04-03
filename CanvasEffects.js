@@ -225,11 +225,12 @@
 	
 	//colour effects
 	extend(fx.prototype,{
-		greyscale:function(){
+		greyscale:function(mix){
+			mix = mix === undefined ? 1 : m.min(m.max(mix,0),1);
 			var self = this;
 			return this.process(function(r,g,b,a){
 				var l = self.luminance(r,g,b);
-				return [l,l,l,a];
+				return [l*mix+r*(1-mix),l*mix+g*(1-mix),l*mix+b*(1-mix),a];
 			});
 		},
 		threshold:function(threshold){
@@ -240,13 +241,14 @@
 				return [l,l,l,a];
 			});
 		},
-		invert:function(){
+		invert:function(mix){
+			mix = mix === undefined ? 1 : m.min(m.max(mix,0),1);
 			return this.process(function(r,g,b,a){
-				return [255-r,255-g,255-b,a];
+				return [(255-r)*mix+r*(1-mix),(255-g)*mix+g*(1-mix),(255-b)*mix+b*(1-mix),a];
 			});
 		},
 		sepia:function(mix){
-			mix = m.max(m.min(mix||1,1),0);
+			mix = mix === undefined ? 1 : m.min(m.max(mix,0),1);
 			return this.process(function(r,g,b,a){
 				var nr = (0.393 * r + 0.769 * g + 0.189 * b) * mix + r * (1 - mix);
 				var ng = (0.349 * r + 0.686 * g + 0.168 * b) * mix + g * (1 - mix);

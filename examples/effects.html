@@ -16,10 +16,18 @@
 				workerPath:'../CanvasEffects.worker.min.js'
 			});
 			var opts = {
-				threshold: 0,
+				sepia: 0,
+				greyscale: 0,
+				invert: 0,
+				noise: 0,
+				glow: 0
 			}
 			gui = new dat.GUI();
-			gui.add(opts,'threshold',0,255);
+			gui.add(opts,'sepia',0,1);
+			gui.add(opts,'greyscale',0,1);
+			gui.add(opts,'invert',0,1);
+			gui.add(opts,'noise',0,100);
+			gui.add(opts,'glow');
 			
 			for(var i in gui.__controllers){
 				gui.__controllers[i].onChange((function(i){

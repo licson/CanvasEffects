@@ -16,16 +16,20 @@
 				workerPath:'../CanvasEffects.worker.min.js'
 			});
 			var opts = {
-				threshold: 0,
-			}
+				emboss: false,
+				sharpen: false,
+				findEdges: false
+			};
 			gui = new dat.GUI();
-			gui.add(opts,'threshold',0,255);
+			gui.add(opts,'emboss');
+			gui.add(opts,'sharpen');
+			gui.add(opts,'findEdges');
 			
 			for(var i in gui.__controllers){
 				gui.__controllers[i].onChange((function(i){
 						return function(value){
 							fx.restore();
-							fx[i](value);
+							value && fx[i]();
 						}
 				})(gui.__controllers[i].property));
 			}

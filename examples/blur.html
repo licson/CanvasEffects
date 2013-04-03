@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>CanvasEffect.js blur example</title>
+		<title>CanvasEffect.js image adjustments</title>
 		<script src="../CanvasEffects.min.js"></script>
+		<script src="./dat.gui.min.js"></script>
 		<script>
-		var fx;
+		var fx, gui;
 		
 		function $(selector){
 			return document.querySelector(selector);
@@ -14,11 +15,22 @@
 			fx = new CanvasEffects($('#pict'),{
 				workerPath:'../CanvasEffects.worker.min.js'
 			});
-			$('#level').addEventListener('change',function(){
-				fx.restore();
-				fx.blur(this.value);
-			},false);
-			fx.load('pict.jpg');
+			var opts = {
+				blur: 0,
+			}
+			gui = new dat.GUI();
+			gui.add(opts,'blur',0,50);
+			
+			for(var i in gui.__controllers){
+				gui.__controllers[i].onFinishChange((function(i){
+						return function(value){
+							fx.restore();
+							fx[i](value);
+						}
+				})(gui.__controllers[i].property));
+			}
+			
+			fx.load('./pict.jpg');
 			
 			$('#save').addEventListener('click',function(){
 				window.open(fx.toDataURL());
@@ -30,8 +42,7 @@
 	<body>
 		<canvas id="pict" width="670" height="503"></canvas>
 		<div>
-			Blur level: <input id="level" type="range" min="0" max="50" step="1" value="0"/>
-			<a href="#" id="save">Save</a>
+			<a href="#" id="save" style="background: #ccc; border: #000 solid 1px; padding: 10px;">Save</a>
 		</div>
 	</body>
 </html>

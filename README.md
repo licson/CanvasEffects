@@ -4,9 +4,9 @@ It is a little javascript library for you to add some effects on photos using HT
 
 Features
 =============
- - Simple photo effects
+ - Simple photo effects [(example)](http://licson0729.github.com/CanvasEffects/examples/effects.html)
    1. Greyscale
-   2. Threshold
+   2. Threshold [(example)](http://licson0729.github.com/CanvasEffects/examples/threshold.html)
    3. Sepia
    4. Invert
  - Adjustments [(example)](http://licson0729.github.com/CanvasEffects/examples/adjustments.html)
