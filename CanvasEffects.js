@@ -1,4 +1,4 @@
-﻿(function(window){
+(function(window){
 	//shortcuts to document and math
 	var doc = window.document;
 	var m = window.Math;
@@ -27,7 +27,7 @@
 			width:canvas.width,
 			height:canvas.height,
 			useWorker:typeof Worker === "function",
-			workerPath:'CanvasEffects_worker.js'
+			workerPath:'CanvasEffects.worker.js'
 		};
 		extend(_opts,opts);
 		
@@ -45,12 +45,13 @@
 		//setup the worker
 		if(_opts.useWorker){
 			var self = this;
+			this._queue = [];
 			this.worker = new Worker(_opts.workerPath);
 			this.worker.onmessage = function(e){
-				var output = self.ctx.createImageData(self.width,self.height);
+				var output = self.createImageData(self.width,self.height);
 				
 				//This is a hack for IE10
-				//because they don't have support for UintClampedArray
+				//because they don't have support for Uint8ClampedArray
 				//and we need to copy the data maunally
 				if(typeof Uint8ClampedArray === "undefined"){
 					for(var i = 0; i < e.data.length; i++){
@@ -60,6 +61,13 @@
 				else {
 					output.data.set(e.data);
 				}
+				
+				//execute the queue
+				for(var i = 0; i < self._queue.length; i++){
+					output.data = self._queue[i](output.data);
+				}
+				//reset the queue
+				self._queue = [];
 				
 				self.ctx.clearRect(0,0,self.width,self.height);
 				self.ctx.putImageData(output,0,0);
@@ -93,10 +101,12 @@
 			return this
 		},
 		restore:function(){
+			this.ctx.clearRect(0,0,this.width,this.height);
 			this.ctx.drawImage(this.tmpCtx.canvas,0,0,this.width,this.height);
 			return this;
 		},
 		save:function(){
+			this.tmpCtx.clearRect(0,0,this.width,this.height);
 			this.tmpCtx.drawImage(this.ctx.canvas,0,0,this.width,this.height);
 		},
 		toDataURL:function(){
@@ -104,13 +114,16 @@
 		},
 		process:function(func){
 			var pix = this.ctx.getImageData(0,0,this.width,this.height);
-			for(var i = 0; i < pix.data.length; i+= 4){
-				var r = pix.data[i], g = pix.data[i+1], b = pix.data[i+2], a = pix.data[i+3];
-				var ret = func(r,g,b,a);
-				pix.data[i] = ret[0];
-				pix.data[i+1] = ret[1];
-				pix.data[i+2] = ret[2];
-				pix.data[i+3] = ret[3];
+			for(var x = 0; x < this.width; x++){
+				for(var y = 0; y < this.height; y++){
+					var i = (y*this.width+x)*4;
+					var r = pix.data[i], g = pix.data[i+1], b = pix.data[i+2], a = pix.data[i+3];
+					var ret = func(r,g,b,a,x,y);
+					pix.data[i] = ret[0];
+					pix.data[i+1] = ret[1];
+					pix.data[i+2] = ret[2];
+					pix.data[i+3] = ret[3];
+				}
 			}
 			this.ctx.clearRect(0,0,this.width,this.height);
 			this.ctx.putImageData(pix,0,0);
@@ -188,6 +201,25 @@
 				g:g*255,
 				b:b*255
 			};
+		},
+		_toWorker:function(params){
+			if(this.worker){
+				extend(params,{data:this.ctx.getImageData(0,0,this.width,this.height).data});
+				this.worker.postMessage(params);
+				return this;
+			}
+			else {
+				assert(false,'No web worker support!');
+			}
+		},
+		queue:function(func){
+			if(!this.worker){
+				var pix = this.ctx.getImageData(0,0,this.width,this.height);
+				pix.data = func(pix.data);
+				this.ctx.putImageData(pix,0,0);
+			}
+			else this._queue.push(func);
+			return this;
 		}
 	});
 	
@@ -220,6 +252,41 @@
 				var ng = (0.349 * r + 0.686 * g + 0.168 * b) * mix + g * (1 - mix);
 				var nb = (0.272 * r + 0.534 * g + 0.131 * b) * mix + b * (1 - mix);
 				return [nr,ng,nb,a];
+			});
+		}
+	});
+	
+	//special effects
+	extend(fx.prototype,{
+		noise:function(amt,alphanoise){
+			assert(amt >= 0,"Noise amount must be a positive number.");
+			alphanoise = alphanoise || false;
+			return this.process(function(r,g,b,a){
+				var noise = -amt/2 + m.random() * amt * 2;
+				return [r+noise,g+noise,b+noise,alphanoise ? a + noise : a];
+			});
+		},
+		glow:function(radius){
+			var self = this;
+			this.blur(radius);
+			return this.queue(function(data){
+				var orig = self.ctx.getImageData(0,0,self.width,self.height);
+				for(var i = 0; i < data.length; i += 4){
+					data[i] = 255 - (((255 - data[i]) * (255 - orig.data[i])) / 255);
+					data[i+1] = 255 - (((255 - data[i+1]) * (255 - orig.data[i+1])) / 255);
+					data[i+2] = 255 - (((255 - data[i+2]) * (255 - orig.data[i+2])) / 255);
+					data[i+3] = 255 - (((255 - data[i+3]) * (255 - orig.data[i+3])) / 255);
+				}
+				return data;
+			});
+		},
+		colorMatrix:function(matrix){
+			return this.process(function(r,g,b,a){
+				r = r * matrix[0] + g * matrix[1] + b * matrix[2] + a * matrix[3] + 255 * matrix[20];
+				g = r * matrix[5] + g * matrix[6] + b * matrix[7] + a * matrix[8] + 255 * matrix[21];
+				b = r * matrix[10] + g * matrix[11] + b * matrix[12] + a * matrix[13] + 255 * matrix[22];
+				a = r * matrix[15] + g * matrix[16] + b * matrix[17] + a * matrix[18] + 255 * matrix[23];
+				return [r,g,b,a];
 			});
 		}
 	});
@@ -265,23 +332,40 @@
 			});
 		},
 		contrast:function(level){
+			assert(level !== undefined,"Contrast level must be set.");
 			var self = this;
+			level = m.pow((level+100)/100,2);
 			return this.process(function(r,g,b,a){
-				var l = self.luminance(r,g,b,a);
-				if(l < 127){
-					level = -level;
-				}
-				return [r+level,g+level,b+level,a]
+				return [((r/255-0.5)*level+0.5)*255,((g/255-0.5)*level+0.5)*255,((b/255-0.5)*level+0.5)*255,a];
 			});
 		},
 		gamma:function(gamma){
+			assert(gamma !== undefined,"Gamma level must be set.");
 			return this.process(function(r,g,b,a){
 				return [r*gamma,g*gamma,b*gamma,a];
 			});
 		},
 		gammaRGB:function(lr,lg,lb){
+			assert(lr !== undefined && lg !== undefined && lb !== undefined,"Gamma level must be set.");
 			return this.process(function(r,g,b,a){
 				return [r*lr,g*lg,b*lb,a];
+			});
+		},
+		vibrance:function(level){
+			assert(level !== undefined,"Vibrance level must be set.");
+			level *= -1;
+			return this.process(function(r,g,b,a){
+				var max = m.max(r,g,b), avg = (r+g+b)/3, amt = ((m.abs(max - avg) * 2 / 255) * level) / 100;
+				if(r !== max){
+					r += (max - r) * amt;
+				}
+				if(g !== max){
+					g += (max - g) * amt;
+				}
+				if(b !== max){
+					b += (max - b) * amt;
+				}
+				return [r,g,b,a];
 			});
 		}
 	});
@@ -289,29 +373,33 @@
 	//convolution effects
 	extend(fx.prototype,{
 		convolute:function(weights,offset,opaque){
+			assert(weights !== undefined,"Convolution matrix must be set.");
+			assert(offset !== undefined,"Offset must be set.");
 			opaque = opaque || true;
-			var pixels = this.ctx.getImageData(0,0,this.width,this.height);
-			var side = m.round(m.sqrt(weights.length));
-			var halfSide = m.floor(side/2);
-			var src = pixels.data;
-			var sw = pixels.width;
-			var sh = pixels.height;
+
 			if(this.worker){
-				this.worker.postMessage({
+				this._toWorker({
 					type:'convolute',
-					data:src,
 					matrix:weights,
 					offset:offset,
 					opaque:opaque
 				});
 			}
 			else {
+				var pixels = this.ctx.getImageData(0,0,this.width,this.height);
+				var side = m.round(m.sqrt(weights.length));
+				var halfSide = m.floor(side/2);
+				var src = pixels.data;
+				var sw = pixels.width;
+				var sh = pixels.height;
+				
 				//pad output by the convolution matrix
 				var w = sw;
 				var h = sh;
 				var output = this.createImageData(w, h);
 				var dst = output.data;
-					//go through the destination image pixels
+				
+				//go through the destination image pixels
 				var alphaFac = opaque ? 1 : 0;
 				for(var y=0; y<h; y++){
 					for(var x=0; x<w; x++){
@@ -347,7 +435,7 @@
 			return this;
 		},
 		blur:function(level){
-			assert(level !== undefined,"Level must be set.");
+			assert(level !== undefined,"Blur radius must be set.");
 			var len = level*level;
 			var val = 1/len;
 			var matrix = [];
@@ -356,6 +444,7 @@
 				//it means that the blur radius is less than 2. There's no need to blur.
 				return this;
 			}
+			//Fill up our convolution matrix with values
 			while(len--){
 				matrix.push(val);
 			}
