@@ -36,6 +36,7 @@
 						return function(value){
 							fx.restore();
 							fx[i](value);
+							fx.save();
 						}
 				})(gui.__controllers[i].property));
 			}
