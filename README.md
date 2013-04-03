@@ -4,28 +4,28 @@ It is a little javascript library for you to add some effects on photos using HT
 
 Features
 =============
- Simple photo effects
-  Greyscale
-  Threshold
-  Sepia
-  Invert
- Adjustments
-  Brightness
-  Contrast
-  Gamma
-  Hue
-  Saturation
-  Vibrance
- Special effects
-  Glow
-  Noise
-  Color matrix ([See here for details](http://msdn.microsoft.com/en-us/library/system.drawing.imaging.colormatrix.aspx))
- Convolution effects
-  Custom _n*n_ convolution matrix
-  Box Blur
-  Emboss
-  Sharpen
-  Find Edges
+ - Simple photo effects
+   1. Greyscale
+   2. Threshold
+   3. Sepia
+   4. Invert
+ - Adjustments [(example)](http://licson0729.github.com/CanvasEffects/examples/adjustments.html)
+   1. Brightness
+   2. Contrast
+   3. Gamma
+   4. Hue
+   5. Saturation
+   6. Vibrance
+ - Special effects
+   1. Glow
+   2. Noise
+   3. Color matrix ([See here for details](http://msdn.microsoft.com/en-us/library/system.drawing.imaging.colormatrix.aspx))
+ - Convolution effects
+   1. Custom _n*n_ convolution matrix
+   2. Box Blur [(example)](http://licson0729.github.com/CanvasEffects/examples/blur.html)
+   3. Emboss
+   4. Sharpen
+   5. Find Edges
 
 What's new
 ==============
