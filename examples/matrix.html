@@ -15,39 +15,47 @@
 			fx = new CanvasEffects($('#pict'),{
 				workerPath:'../CanvasEffects.worker.min.js'
 			});
+			
 			var opts = {
-				brightness: 0,
-				contrast: 0,
-				gamma: 1,
-				saturation: 0,
-				hue: 0,
-				vibrance: 0,
-				whiteBalance: 6600
-			}
+				m11:0,
+				m12:0,
+				m13:0,
+				m21:0,
+				m22:1,
+				m23:0,
+				m31:0,
+				m32:0,
+				m33:0,
+				opaque:false,
+				offset:0
+			};
+			
+			var process = function(){
+				fx.convolute([
+					opts.m11,opts.m12,opts.m13,
+					opts.m21,opts.m22,opts.m23,
+					opts.m31,opts.m32,opts.m33,
+				],opts.offset,opts.opaque);
+			};
+			
 			gui = new dat.GUI();
-			gui.add(opts,'brightness',-100,100);
-			gui.add(opts,'contrast',-100,100);
-			gui.add(opts,'gamma',0,2);
-			gui.add(opts,'saturation',0,1);
-			gui.add(opts,'hue',0,360);
-			gui.add(opts,'vibrance',-100,100);
-			gui.add(opts,'whiteBalance',0,40000);
+			gui.add(opts,'m11');
+			gui.add(opts,'m12');
+			gui.add(opts,'m13');
+			gui.add(opts,'m21');
+			gui.add(opts,'m22');
+			gui.add(opts,'m23');
+			gui.add(opts,'m31');
+			gui.add(opts,'m32');
+			gui.add(opts,'m33');
+			gui.add(opts,'opaque');
+			gui.add(opts,'offset',0,255);
 			
 			for(var i in gui.__controllers){
-				gui.__controllers[i].onChange((function(i){
-						return function(value){
-							fx.restore();
-							fx[i](value);
-						}
-				})(gui.__controllers[i].property));
-				
-				gui.__controllers[i].onFinishChange((function(i){
-						return function(value){
-							fx.restore();
-							fx[i](value);
-							fx.save();
-						}
-				})(gui.__controllers[i].property));
+				gui.__controllers[i].onChange(function(value){
+					fx.restore();
+					process();
+				});
 			}
 			
 			fx.load('./pict.jpg');

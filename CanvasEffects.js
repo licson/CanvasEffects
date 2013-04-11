@@ -108,6 +108,7 @@
 		save:function(){
 			this.tmpCtx.clearRect(0,0,this.width,this.height);
 			this.tmpCtx.drawImage(this.ctx.canvas,0,0,this.width,this.height);
+			return this;
 		},
 		toDataURL:function(){
 			return this.ctx.canvas.toDataURL();
@@ -202,6 +203,36 @@
 				b:b*255
 			};
 		},
+		colorTempToRGB:function(temp){
+            temp /= 100;
+            var r, g, b;
+            
+			if(temp <= 66){
+				r = 255;
+				g = m.min(m.max(99.4708025861 * m.log(temp) - 161.1195681661,0),255);
+			}
+			else {
+				r = m.min(m.max(329.698727446 * m.pow(temp-60,-0.1332047592),0),255);
+				g = m.min(m.max(288.1221695283 * m.pow(temp-60,-0.0755148492),0),255);
+			}
+			
+			if(temp >= 66){
+				b = 255;
+			}
+			else if(temp <= 19){
+				b = 0;
+			}
+			else {
+				b = temp - 10;
+				b = m.min(m.max(138.5177312231 * m.log(b) - 305.0447927307,0),255);
+			}
+			
+			return {
+				r:r,
+				g:g,
+				b:b
+			}
+		},
 		_toWorker:function(params){
 			if(this.worker){
 				extend(params,{data:this.ctx.getImageData(0,0,this.width,this.height).data});
@@ -284,11 +315,11 @@
 		},
 		colorMatrix:function(matrix){
 			return this.process(function(r,g,b,a){
-				r = r * matrix[0] + g * matrix[1] + b * matrix[2] + a * matrix[3] + 255 * matrix[20];
-				g = r * matrix[5] + g * matrix[6] + b * matrix[7] + a * matrix[8] + 255 * matrix[21];
-				b = r * matrix[10] + g * matrix[11] + b * matrix[12] + a * matrix[13] + 255 * matrix[22];
-				a = r * matrix[15] + g * matrix[16] + b * matrix[17] + a * matrix[18] + 255 * matrix[23];
-				return [r,g,b,a];
+				var nr = r * matrix[0] + g * matrix[1] + b * matrix[2] + a * matrix[3] + 255 * matrix[20];
+				var ng = r * matrix[5] + g * matrix[6] + b * matrix[7] + a * matrix[8] + 255 * matrix[21];
+				var nb = r * matrix[10] + g * matrix[11] + b * matrix[12] + a * matrix[13] + 255 * matrix[22];
+				var na = r * matrix[15] + g * matrix[16] + b * matrix[17] + a * matrix[18] + 255 * matrix[23];
+				return [nr,ng,nb,na];
 			});
 		}
 	});
@@ -368,6 +399,15 @@
 					b += (max - b) * amt;
 				}
 				return [r,g,b,a];
+			});
+		},
+		whiteBalance:function(temp){
+			var color = this.colorTempToRGB(temp);
+			return this.process(function(r,g,b,a){
+				var nr = r * (255 / color.r);
+				var ng = g * (255 / color.g);
+				var nb = b * (255 / color.b);
+				return [nr,ng,nb,a];
 			});
 		}
 	});

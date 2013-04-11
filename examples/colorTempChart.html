@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Colour Tempurature Chart</title>
+		<meta charset="utf-8" />
+		<script src="../CanvasEffects.js"></script>
+		<script>
+			window.onload = function(){
+				var fx = new CanvasEffects(document.getElementById('chart'),{});
+				fx.process(function(r,g,b,a,x){
+					var temp = 40000 * (x / fx.width);
+					var color = fx.colorTempToRGB(temp);
+					return [color.r,color.g,color.b,255];
+				});
+				
+				var tooltip = document.getElementById('tooltip');
+				
+				fx.ctx.canvas.addEventListener('mouseover',function(e){
+					tooltip.style.display = 'block';
+					tooltip.style.left = e.clientX;
+					tooltip.style.top = e.clientY;
+				});
+				
+				fx.ctx.canvas.addEventListener('mousemove',function(e){
+					var temp = (e.offsetX / fx.ctx.canvas.clientWidth) * 40000;
+					tooltip.innerHTML = Math.round(temp) + ' K';
+					tooltip.style.left = e.offsetX;
+					tooltip.style.top = e.offsetY;
+				});
+				
+				fx.ctx.canvas.addEventListener('mouseout',function(e){
+					tooltip.style.display = 'none';
+					tooltip.style.left = e.clientX;
+					tooltip.style.top = e.clientY;
+				});
+			};
+		</script>
+	</head>
+	<body>
+		<canvas width="500" height="300" id="chart" style="width: 100%; height: 100%;"></canvas>
+		<div id="tooltip" style="position:absolute; border: 1px black solid; background: white; display: none; top: 0; left: 0;"></div>
+	</body>
+</html>

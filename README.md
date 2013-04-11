@@ -16,9 +16,10 @@ Features
    4. Hue
    5. Saturation
    6. Vibrance
+   7. White Balance adjust [(See the colour temperature chart which is very useful for photographers.)](http://licson0729.github.com/CanvasEffects/examples/colorTempChart.html)
  - Special effects
-   1. Glow
-   2. Noise
+   1. Glow [(example)](http://licson0729.github.com/CanvasEffects/examples/effects.html)
+   2. Noise [(example)](http://licson0729.github.com/CanvasEffects/examples/effects.html)
    3. Color matrix ([See here for details](http://msdn.microsoft.com/en-us/library/system.drawing.imaging.colormatrix.aspx))
  - Convolution effects
    1. Custom _n*n_ convolution matrix
@@ -30,9 +31,9 @@ Features
 What's new
 ==============
 
-1. Add new effects (Color Matrix, Glow, Noise).
-2. Fixed the contrast algorithm to make it really work
-3. Added `fx.queue(func)` to queue effects when using Web Worker-boosted effects, execute after web worker had finished processing. (Currently only convolution effects will be run in a web worker)
+1. Add new effects (White Balance adjust).
+2. Add new examples: [A colour chart](http://licson0729.github.com/CanvasEffects/examples/colorTempChart.html) and [(3x3 custom convolution matrix)](http://licson0729.github.com/CanvasEffects/examples/matrix.html).
+3. Added `fx.colorTempToRGB(temp)` to convert colour temperstures to RGB values.
 
 How to use
 ==============

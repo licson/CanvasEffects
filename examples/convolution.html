@@ -15,23 +15,29 @@
 			fx = new CanvasEffects($('#pict'),{
 				workerPath:'../CanvasEffects.worker.min.js'
 			});
+			
 			var opts = {
 				emboss: false,
 				sharpen: false,
 				findEdges: false
 			};
+			
+			var process = function(){
+				opts.emboss && fx.emboss();
+				opts.sharpen && fx.sharpen();
+				opts.findEdges && fx.findEdges();
+			};
+			
 			gui = new dat.GUI();
 			gui.add(opts,'emboss');
 			gui.add(opts,'sharpen');
 			gui.add(opts,'findEdges');
 			
 			for(var i in gui.__controllers){
-				gui.__controllers[i].onChange((function(i){
-						return function(value){
-							fx.restore();
-							value && fx[i]();
-						}
-				})(gui.__controllers[i].property));
+				gui.__controllers[i].onChange(function(value){
+					fx.restore();
+					process();
+				});
 			}
 			
 			fx.load('./pict.jpg');
