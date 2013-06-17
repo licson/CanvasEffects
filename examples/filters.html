@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>CanvasEffect.js image adjustments</title>
+		<title>CanvasEffect.js image filters</title>
 		<link href="bootstrap.min.css" type="text/css" rel="stylesheet" />
 		<script src="../CanvasEffects.min.js"></script>
 		<script src="./dat.gui.min.js"></script>
@@ -17,19 +17,14 @@
 				workerPath:'../CanvasEffects.worker.min.js'
 			});
 			var opts = {
-				blur: 0,
+				equalize: fx.equalize.bind(fx),
+				HDR: fx.hdr.bind(fx),
+				TV: fx.tv.bind(fx)
 			}
 			gui = new dat.GUI();
-			gui.add(opts,'blur',0,50);
-			
-			for(var i in gui.__controllers){
-				gui.__controllers[i].onFinishChange((function(i){
-						return function(value){
-							fx.restore();
-							fx[i](value);
-						}
-				})(gui.__controllers[i].property));
-			}
+			gui.add(opts,'equalize');
+			gui.add(opts,'HDR');
+			gui.add(opts,'TV');
 			
 			fx.load('./pict.jpg');
 			
@@ -42,7 +37,7 @@
 	
 	<body>
 		<div class="page-header">
-			<h1>CanvasEffects.js blur example</h1>
+			<h1>CanvasEffects.js image filters example</h1>
 		</div>
 		<canvas id="pict" width="670" height="503"></canvas>
 		<div>

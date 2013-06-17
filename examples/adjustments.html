@@ -2,7 +2,8 @@
 <html>
 	<head>
 		<title>CanvasEffect.js image adjustments</title>
-		<script src="../CanvasEffects.min.js"></script>
+		<link href="bootstrap.min.css" type="text/css" rel="stylesheet" />
+		<script src="../CanvasEffects.js"></script>
 		<script src="./dat.gui.min.js"></script>
 		<script>
 		var fx, gui;
@@ -28,7 +29,7 @@
 			gui.add(opts,'brightness',-100,100);
 			gui.add(opts,'contrast',-100,100);
 			gui.add(opts,'gamma',0,2);
-			gui.add(opts,'saturation',0,1);
+			gui.add(opts,'saturation',-1,1);
 			gui.add(opts,'hue',0,360);
 			gui.add(opts,'vibrance',-100,100);
 			gui.add(opts,'whiteBalance',0,40000);
@@ -60,9 +61,12 @@
 	</head>
 	
 	<body>
+		<div class="page-header">
+			<h1>CanvasEffects.js available image adjustments</h1>
+		</div>
 		<canvas id="pict" width="670" height="503"></canvas>
 		<div>
-			<a href="#" id="save" style="background: #ccc; border: #000 solid 1px; padding: 10px;">Save</a>
+			<a href="#" id="save" class="btn btn-large">Save</a>
 		</div>
 	</body>
 </html>

@@ -83,7 +83,7 @@
 	//Utility functions
 	extend(fx.prototype,{
 		load:function(url,resize){
-			resize = resize || true;
+			resize = typeof resize !== "undefined" ? resize : true;
 			var img = new Image();
 			var self = this;
 			img.onload = function(){
@@ -204,8 +204,8 @@
 			};
 		},
 		colorTempToRGB:function(temp){
-            temp /= 100;
-            var r, g, b;
+			temp /= 100;
+			var r, g, b;
             
 			if(temp <= 66){
 				r = 255;
@@ -232,6 +232,26 @@
 				g:g,
 				b:b
 			}
+		},
+		equalizeHistogram:function(src,dst){
+			var sLen = src.length;
+			if(!dst) dst = src;
+			var hist = new Float32Array(256), sum = 0;
+			for(var i = 0; i < sLen; ++i){
+				++hist[~~src[i]];
+				++sum;
+			}
+			// Compute integral histogram:
+			var prev = hist[0];
+			for(var i = 1; i < 256; ++i){
+				prev = hist[i] += prev;
+			}
+			// Equalize image:
+			var norm = 255 / sum;
+			for(var i = 0; i < sLen; ++i) {
+				dst[i] = hist[~~src[i]] * norm;
+			}
+			return dst;
 		},
 		_toWorker:function(params){
 			if(this.worker){
@@ -286,6 +306,26 @@
 				var nb = (0.272 * r + 0.534 * g + 0.131 * b) * mix + b * (1 - mix);
 				return [nr,ng,nb,a];
 			});
+		},
+		hdr:function(){
+			var changeContrast = function(v){
+				if(v > 0 && v <= 127){
+					v = m.sin(m.PI * (90-v/4) / 180) * v;
+				}
+				else if(v > 127){
+					v = m.sin(m.PI * (90-(255-v)/4) / 180) * v;
+				}
+				return v;
+			};
+			
+			return this.process(function(r,g,b,a){
+				return [
+					changeContrast(r),
+					changeContrast(g),
+					changeContrast(b),
+					a
+				];
+			});
 		}
 	});
 	
@@ -321,6 +361,37 @@
 				var na = r * matrix[15] + g * matrix[16] + b * matrix[17] + a * matrix[18] + 255 * matrix[23];
 				return [nr,ng,nb,na];
 			});
+		},
+		equalize:function(){
+			var self = this, table = new Uint8ClampedArray(this.width*this.height), i = 0;
+			this.process(function(r,g,b,a){
+				table[i] = self.luminance(r,g,b);
+				i++;
+				return [r,g,b,a];
+			});
+			this.equalizeHistogram(table);
+			i = 0;
+			return this.process(function(r,g,b,a){
+				var hsl = self.toHSL(r,g,b);
+				hsl.l = table[i] / 255;
+				i++;
+				var rgb = self.toRGB(hsl.h,hsl.s,hsl.l);
+				return [rgb.r,rgb.g,rgb.b,a];
+			});
+		},
+		tv:function(){
+			//Scanlines
+			this.process(function(r,g,b,a,x,y){
+				var br = m.sin(y) * 80;
+				return [
+					r - br,
+					g - br,
+					b - br,
+					a
+				];
+			});
+			//Noise
+			return this.noise(50);
 		}
 	});
 	
@@ -349,10 +420,10 @@
 			return this.process(function(r,g,b,a){
 				var hsl = self.toHSL(r,g,b);
 				if(colorize){
-					hsl.s = sat;
+					hsl.s = m.min(m.max(sat,0),1);
 				}
 				else {
-					hsl.s = hsl.s + sat;
+					hsl.s = m.min(m.max(hsl.s + sat,0),1);
 				}
 				var rgb = self.toRGB(hsl.h,hsl.s,hsl.l);
 				return [rgb.r,rgb.g,rgb.b,a];
@@ -490,16 +561,16 @@
 			while(len--){
 				matrix.push(val);
 			}
-			return this.convolute(matrix,0,true);
+			return this.convolute(matrix,0,false);
 		},
 		sharpen:function(){
-			return this.convolute([0,-1,0,-1,5,-1,0,-1,0],0,true);
+			return this.convolute([0,-1,0,-1,5,-1,0,-1,0],0,false);
 		},
 		emboss:function(){
-			return this.convolute([2,0,0,0,-1,0,0,0,-1],127,true);
+			return this.convolute([2,0,0,0,-1,0,0,0,-1],127,false);
 		},
 		findEdges:function(){
-			return this.convolute([-1,0,1,-2,0,2,-1,0,1],0,true);
+			return this.convolute([-1,0,1,-2,0,2,-1,0,1],0,false);
 		}
 	});
 	
