@@ -1,16 +1,16 @@
 (function(window){
-	//shortcuts to document and math
+	//Shortcuts to document and math
 	var doc = window.document;
 	var m = window.Math;
 	
-	//little function for extending object
+	//A little function for extending object
 	var extend = function(a,b){
 		for(var i in b){
 			a[i] = b[i];
 		}
 	};
 	
-	//assertion - good for debug
+	//Assertion - good for debug
 	var assert = function(condition,msg){
 		msg = msg || '';
 		if(!condition){
@@ -18,7 +18,21 @@
 		}
 	};
 	
-	//our main constructor
+	//#Class Constructor: CanvasEffects
+	//
+	//Creates a `CanvasEffects` instance.
+	//
+	//##Options
+	//  - `canvas` : The canvas DOM object for applying effects
+	//  - `opts` : Extra Options
+	//    - `width` : If set, override the width of the canvas
+	//    - `height` : If set, override the height of the canvas
+	//    - `useWorker` : Whether to use Web Workers or not. It'll use Web Workers by default if supported. You need to turn this off if you use it to apply effects on animations.
+	//    - `workerPath` : The path to the Web Worker script.
+	//
+	//Example:
+	//    var fx = new CanvasEffects(canvas, { useWorker: false });
+	//
 	var fx = function(canvas,opts){
 		//check if the given element is a canvas element
 		assert(canvas.nodeName.toLowerCase() === "canvas","A canvas element is excepted.");
@@ -72,6 +86,7 @@
 				self.ctx.clearRect(0,0,self.width,self.height);
 				self.ctx.putImageData(output,0,0);
 			};
+			
 			this.worker.postMessage({
 				type:'init',
 				w:this.width,
@@ -82,8 +97,23 @@
 	
 	//Utility functions
 	extend(fx.prototype,{
-		load:function(url,resize){
+		//#Class Method: load
+		//
+		//Loads an image to the canvas
+		//
+		//##Options
+		//  - `url` : The image's URL
+		//  - `resize` _Optional_ : whether to strecth the image to fit the canvas.
+		//  - `cb` : The callback after the image has finished loading.
+		load:function(url, resize, cb){
+			//If resize parameter is missing, we swap the variables.
+			if(typeof resize == "function"){
+				cb = resize;
+				resize = true;
+			}
 			resize = typeof resize !== "undefined" ? resize : true;
+			
+			//Create a new inage object
 			var img = new Image();
 			var self = this;
 			img.onload = function(){
@@ -95,26 +125,58 @@
 					self.ctx.drawImage(this,0,0,this.width,this.height);
 					self.tmpCtx.drawImage(this,0,0,this.width,this.height);
 				}
+				cb.call(self);
 			};
 			img.crossOrigin = true;
 			img.src = url;
 			return this
 		},
+		//#Class Method: restore
+		//
+		//Restore the previous saved state
+		//
+		//##Options
+		//  - No options
 		restore:function(){
 			this.ctx.clearRect(0,0,this.width,this.height);
 			this.ctx.drawImage(this.tmpCtx.canvas,0,0,this.width,this.height);
 			return this;
 		},
+		//#Class Method: save
+		//
+		//Saves the state of the canvas
+		//
+		//##Options
+		//  - No options
 		save:function(){
 			this.tmpCtx.clearRect(0,0,this.width,this.height);
 			this.tmpCtx.drawImage(this.ctx.canvas,0,0,this.width,this.height);
 			return this;
 		},
+		//#Class Method: toDataUrl
+		//
+		//Snapshots the canvas as a base64-encoded PNG image
+		//
+		//##Options
+		//  - No options
 		toDataURL:function(){
-			return this.ctx.canvas.toDataURL();
+			return this.ctx.canvas.toDataURL('image/png');
 		},
+		//#Class Method: process
+		//
+		//Process the canvas with custom functions.
+		//The function will receive 6 parameters: `r`,`g`,`b`,`a`,`x`,`y`.
+		//`r`,`g`,`b`,`a` are the colour values and `x`,`y` are the current pixel position.
+		//
+		//The function should return an array contain the four colour values in the order of `r`, `g`, `b`, `a`.
+		//
+		//##Options
+		//  - `func` : The processing function
 		process:function(func){
+			//Get the pixel values
 			var pix = this.ctx.getImageData(0,0,this.width,this.height);
+			
+			//Loop through the pixels
 			for(var x = 0; x < this.width; x++){
 				for(var y = 0; y < this.height; y++){
 					var i = (y*this.width+x)*4;
@@ -126,19 +188,50 @@
 					pix.data[i+3] = ret[3];
 				}
 			}
+			
+			//Put the image back to the canvas
 			this.ctx.clearRect(0,0,this.width,this.height);
 			this.ctx.putImageData(pix,0,0);
 			return this;
 		},
+		//#Class Method: getContext
+		//
+		//Gets the raw canvas context
+		//
+		//##Options
+		//  - No options
 		getContext:function(){
 			return this.ctx;
 		},
+		//#Class Method: luminance
+		//
+		//Calculates the CIE luminance from RGB values
+		//
+		//##Options
+		//  - `r` : The red component
+		//  - `g` : The green component
+		//  - `b` : The blue component
 		luminance:function(r,g,b){
 			return 0.2126*r + 0.7152*g + 0.0722*b;
 		},
+		//#Class Method: createImageData
+		//
+		//Creates an empty image
+		//
+		//##Options
+		//  - `w` : The width of the image
+		//  - `h` : The height of the image
 		createImageData:function(w,h){
 			return this.tmpCtx.createImageData(w,h);
 		},
+		//#Class Method: toHSL
+		//
+		//Converts RGB colours to HSL colours
+		//
+		//##Options
+		//  - `r` : The red component
+		//  - `g` : The green component
+		//  - `b` : The blue component
 		toHSL:function(r,g,b){
 			r /= 255;
 			g /= 255;
@@ -174,6 +267,14 @@
 				l:l
 			};
 		},
+		//#Class Method: toRGB
+		//
+		//Converts HSL colours to RGB colours
+		//
+		//##Options
+		//  - `h` : The hue
+		//  - `s` : The saturation
+		//  - `l` : The lightness
 		toRGB:function(h,s,l){
 			var r, g, b;
 			if(s == 0)
@@ -203,6 +304,12 @@
 				b:b*255
 			};
 		},
+		//#Class Method: colorTemptoRGB
+		//
+		//Converts colour temperatures to RGB colours
+		//
+		//##Options
+		//  - `temp` : The colour temperature
 		colorTempToRGB:function(temp){
 			temp /= 100;
 			var r, g, b;
@@ -233,6 +340,13 @@
 				b:b
 			}
 		},
+		//#Class Method: equalizeHistogram
+		//
+		//Do equalizations on a set of data
+		//
+		//##Options
+		//  - `src` : The source data
+		//  - `dst` _Optional_ : The destination where the result will be written. If omitted, the source will be overwritten.
 		equalizeHistogram:function(src,dst){
 			var sLen = src.length;
 			if(!dst) dst = src;
@@ -253,16 +367,32 @@
 			}
 			return dst;
 		},
+		//#Class Method: toWorker
+		//
+		//Sends graphics commands to Web Worker
+		//* This is only for internal use only *
+		//
+		//##Options
+		//  - `param` : The parameters to pass
 		_toWorker:function(params){
 			if(this.worker){
-				extend(params,{data:this.ctx.getImageData(0,0,this.width,this.height).data});
+				extend(params,{
+					data:this.ctx.getImageData(0,0,this.width,this.height).data
+				});
 				this.worker.postMessage(params);
 				return this;
 			}
 			else {
-				assert(false,'No web worker support!');
+				assert(false, 'No web worker support!');
 			}
 		},
+		//#Class Method: queue
+		//
+		//Queue the next effect operation to be called
+		//* This is only useful with effects handled with Web Workers, currently only convolution effects *
+		//
+		//##Options
+		//  - `func` : The function to execute
 		queue:function(func){
 			if(!this.worker){
 				var pix = this.ctx.getImageData(0,0,this.width,this.height);
@@ -276,6 +406,13 @@
 	
 	//colour effects
 	extend(fx.prototype,{
+		//#Class Method: greyscale
+		//
+		//Makes the image Black & White
+		//
+		//##Options
+		//  - `mix` : The blending ratio between the original image & the greyscaled image.
+		//            1 is completely B/W & 0 is the original image
 		greyscale:function(mix){
 			mix = mix === undefined ? 1 : m.min(m.max(mix,0),1);
 			var self = this;
@@ -284,6 +421,12 @@
 				return [l*mix+r*(1-mix),l*mix+g*(1-mix),l*mix+b*(1-mix),a];
 			});
 		},
+		//#Class Method: greyscale
+		//
+		//Makes the image Black & White, only
+		//
+		//##Options
+		//  - `threshold` : The threshold rate
 		threshold:function(threshold){
 			threshold = threshold || 127;
 			var self = this;
@@ -292,12 +435,24 @@
 				return [l,l,l,a];
 			});
 		},
+		//#Class Method: invert
+		//
+		//Makes the image has a X-Ray feel.
+		//
+		//##Options
+		//  - `mix` : The blending ratio between the original image & the inverted image.
 		invert:function(mix){
 			mix = mix === undefined ? 1 : m.min(m.max(mix,0),1);
 			return this.process(function(r,g,b,a){
 				return [(255-r)*mix+r*(1-mix),(255-g)*mix+g*(1-mix),(255-b)*mix+b*(1-mix),a];
 			});
 		},
+		//#Class Method: sepia
+		//
+		//Gives the image an old yellowish look
+		//
+		//##Options
+		//  - `mix` : The blending ratio between the original image & the sepia'ed image.
 		sepia:function(mix){
 			mix = mix === undefined ? 1 : m.min(m.max(mix,0),1);
 			return this.process(function(r,g,b,a){
@@ -307,6 +462,12 @@
 				return [nr,ng,nb,a];
 			});
 		},
+		//#Class Method: hdr
+		//
+		//Simulates High Dynamic Range (HDR) by changing contrast sinsounaously.
+		//
+		//##Options
+		//  - No Options
 		hdr:function(){
 			var changeContrast = function(v){
 				if(v > 0 && v <= 127){
@@ -329,8 +490,15 @@
 		}
 	});
 	
-	//special effects
+	//Special effects
 	extend(fx.prototype,{
+		//#Class Method: noise
+		//
+		//Generating noise by changing the brightness randomly.
+		//
+		//##Options
+		//  - `amt` : The amount of noisiness
+		//  - `alphanoise` : Also generate noise on alpha channels.
 		noise:function(amt,alphanoise){
 			assert(amt >= 0,"Noise amount must be a positive number.");
 			alphanoise = alphanoise || false;
@@ -339,9 +507,19 @@
 				return [r+noise,g+noise,b+noise,alphanoise ? a + noise : a];
 			});
 		},
+		//#Class Method: glow
+		//
+		//Make the image glows.
+		//
+		//##Options
+		//  - `radius` : The amount of glow
 		glow:function(radius){
 			var self = this;
+			
+			//Blur it first
 			this.blur(radius);
+			
+			//Apply a screen filter with the original image to make the glowing feel
 			return this.queue(function(data){
 				var orig = self.ctx.getImageData(0,0,self.width,self.height);
 				for(var i = 0; i < data.length; i += 4){
@@ -353,6 +531,12 @@
 				return data;
 			});
 		},
+		//#Class Method: colorMatrix
+		//
+		//Apply a 5x5 colour matrix to the image
+		//
+		//##Options
+		//  - `matrix` : The colour matrix
 		colorMatrix:function(matrix){
 			return this.process(function(r,g,b,a){
 				var nr = r * matrix[0] + g * matrix[1] + b * matrix[2] + a * matrix[3] + 255 * matrix[20];
@@ -362,15 +546,26 @@
 				return [nr,ng,nb,na];
 			});
 		},
+		//#Class Method: equalize
+		//
+		//Equalize the image.
+		//
+		//##Options
+		//  - No options
 		equalize:function(){
+			//Calculate the brightness first
 			var self = this, table = new Uint8ClampedArray(this.width*this.height), i = 0;
 			this.process(function(r,g,b,a){
 				table[i] = self.luminance(r,g,b);
 				i++;
 				return [r,g,b,a];
 			});
+			
+			//Then equalize the data
 			this.equalizeHistogram(table);
 			i = 0;
+			
+			//Finally, change the brightness of every pixel
 			return this.process(function(r,g,b,a){
 				var hsl = self.toHSL(r,g,b);
 				hsl.l = table[i] / 255;
@@ -379,8 +574,15 @@
 				return [rgb.r,rgb.g,rgb.b,a];
 			});
 		},
+		//#Class Method: TV
+		//
+		//Adds old TV feel to the image.
+		//
+		//##Options
+		//  - No options
 		tv:function(){
-			//Scanlines
+			// Add same scanlines to the image
+			// TODO: Make the scanline level adjustable
 			this.process(function(r,g,b,a,x,y){
 				var br = m.sin(y) * 80;
 				return [
@@ -390,13 +592,23 @@
 					a
 				];
 			});
-			//Noise
+			
+			// Generate some noise on the image
+			// TODO: Improve the noise generation algorithm
 			return this.noise(50);
 		}
 	});
 	
-	//adjustments
+	// Here are the adjustments
+	//
 	extend(fx.prototype,{
+		//#Class Method: hue
+		//
+		//Adjust the hue or change the hue of an image.
+		//
+		//##Options
+		//  - `hue` : The hue adjustment
+		//  - `colorize` : Whether to chang the hue or to adjust the hue
 		hue:function(hue,colorize){
 			assert(hue !== undefined,"Hue must be specified.")
 			var self = this;
@@ -413,6 +625,13 @@
 				return [rgb.r,rgb.g,rgb.b,a];
 			});
 		},
+		//#Class Method: saturation
+		//
+		//Adjust the saturation or change the saturation of an image.
+		//
+		//##Options
+		//  - `sat` : The saturation adjustment
+		//  - `colorize` : Whether to chang the saturation or to adjust the hue
 		saturation:function(sat,colorize){
 			assert(sat !== undefined,"Saturation must be specified.")
 			var self = this;
@@ -429,12 +648,24 @@
 				return [rgb.r,rgb.g,rgb.b,a];
 			});
 		},
+		//#Class Method: brightness
+		//
+		//Adjust the brightness of an image.
+		//
+		//##Options
+		//  - `brightness` : The brightness adjustment
 		brightness:function(brightness){
 			assert(brightness !== undefined,"Brightness must be set");
 			return this.process(function(r,g,b,a){
 				return [r+brightness,g+brightness,b+brightness,a];
 			});
 		},
+		//#Class Method: contrast
+		//
+		//Adjust the contrast of an image.
+		//
+		//##Options
+		//  - `level` : The contrast adjustment
 		contrast:function(level){
 			assert(level !== undefined,"Contrast level must be set.");
 			var self = this;
@@ -443,18 +674,38 @@
 				return [((r/255-0.5)*level+0.5)*255,((g/255-0.5)*level+0.5)*255,((b/255-0.5)*level+0.5)*255,a];
 			});
 		},
+		//#Class Method: gamma
+		//
+		//Adjust the gamma of an image.
+		//
+		//##Options
+		//  - `gamma` : The gamma adjustment
 		gamma:function(gamma){
 			assert(gamma !== undefined,"Gamma level must be set.");
 			return this.process(function(r,g,b,a){
 				return [r*gamma,g*gamma,b*gamma,a];
 			});
 		},
+		//#Class Method: gammaRGB
+		//
+		//Adjust the gamma of an image on different RGB channels.
+		//
+		//##Options
+		//  - `lr` : The red gamma adjustment
+		//  - `lg` : The green gamma adjustment
+		//  - `lb` : The blue gamma adjustment
 		gammaRGB:function(lr,lg,lb){
 			assert(lr !== undefined && lg !== undefined && lb !== undefined,"Gamma level must be set.");
 			return this.process(function(r,g,b,a){
 				return [r*lr,g*lg,b*lb,a];
 			});
 		},
+		//#Class Method: vibrance
+		//
+		//Adjust the vibrance of an image.
+		//
+		//##Options
+		//  - `level` : The vibrance adjustment
 		vibrance:function(level){
 			assert(level !== undefined,"Vibrance level must be set.");
 			level *= -1;
@@ -472,6 +723,12 @@
 				return [r,g,b,a];
 			});
 		},
+		//#Class Method: whiteBalance
+		//
+		//Adjust the white balance of an image.
+		//
+		//##Options
+		//  - `level` : The colour temperature
 		whiteBalance:function(temp){
 			var color = this.colorTempToRGB(temp);
 			return this.process(function(r,g,b,a){
@@ -483,9 +740,17 @@
 		}
 	});
 	
-	//convolution effects
+	//Convolution effects
 	extend(fx.prototype,{
-		convolute:function(weights,offset,opaque){
+		//#Class Method: convolute
+		//
+		//Apply a convolution matrix of any size to the image
+		//
+		//##Options
+		//  - `weights` : The convolution matrix. It must be a _square_ matrix.
+		//  - `offset` : The offset of the convoluted result
+		//  - `opaque` : Whether not to handle the alpha component and make the image non-transparent.
+		convolute:function(weights, offset, opaque){
 			assert(weights !== undefined,"Convolution matrix must be set.");
 			assert(offset !== undefined,"Offset must be set.");
 			opaque = opaque || true;
@@ -547,6 +812,12 @@
 			}
 			return this;
 		},
+		//#Class Method: blur
+		//
+		//Apply box blur to the image.
+		//
+		//##Options
+		//  - `level` : The blur radius
 		blur:function(level){
 			assert(level !== undefined,"Blur radius must be set.");
 			var len = level*level;
@@ -563,12 +834,30 @@
 			}
 			return this.convolute(matrix,0,false);
 		},
+		//#Class Method: sharpen
+		//
+		//Sharpen the image
+		//
+		//##Options
+		//  - _No options_
 		sharpen:function(){
 			return this.convolute([0,-1,0,-1,5,-1,0,-1,0],0,false);
 		},
+		//#Class Method: emboss
+		//
+		//Emboss the image
+		//
+		//##Options
+		//  - _No options_
 		emboss:function(){
 			return this.convolute([2,0,0,0,-1,0,0,0,-1],127,false);
 		},
+		//#Class Method: findEdges
+		//
+		//Highlight the edges using a sobel filter.
+		//
+		//##Options
+		//  - _No options_
 		findEdges:function(){
 			return this.convolute([-1,0,1,-2,0,2,-1,0,1],0,false);
 		}

@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>CanvasEffects.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>CanvasEffects.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="keyword">function</span>(window){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Shortcuts to document and math</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> doc = window.document;
+	<span class="keyword">var</span> m = window.Math;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>A little function for extending object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> extend = <span class="keyword">function</span>(a,b){
+		<span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> b){
+			a[i] = b[i];
+		}
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Assertion - good for debug</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> assert = <span class="keyword">function</span>(condition,msg){
+		msg = msg || <span class="string">''</span>;
+		<span class="keyword">if</span>(!condition){
+			<span class="keyword">throw</span> <span class="keyword">new</span> Error(msg);
+		}
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h1>Class Constructor: CanvasEffects</h1>
+<p>Creates a <code>CanvasEffects</code> instance.</p>
+<h2>Options</h2>
+<ul>
+<li><code>canvas</code> : The canvas DOM object for applying effects</li>
+<li><code>opts</code> : Extra Options<ul>
+<li><code>width</code> : If set, override the width of the canvas</li>
+<li><code>height</code> : If set, override the height of the canvas</li>
+<li><code>useWorker</code> : Whether to use Web Workers or not. It&#39;ll use Web Workers by default if supported. You need to turn this off if you use it to apply effects on animations.</li>
+<li><code>workerPath</code> : The path to the Web Worker script.</li>
+</ul>
+</li>
+</ul>
+<p>Example:
+   var fx = new CanvasEffects(canvas, { useWorker: false });</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> fx = <span class="keyword">function</span>(canvas,opts){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>check if the given element is a canvas element</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		assert(canvas.nodeName.toLowerCase() === <span class="string">"canvas"</span>,<span class="string">"A canvas element is excepted."</span>);
+		
+		<span class="keyword">var</span> _opts = {
+			width:canvas.width,
+			height:canvas.height,
+			useWorker:<span class="keyword">typeof</span> Worker === <span class="string">"function"</span>,
+			workerPath:<span class="string">'CanvasEffects.worker.js'</span>
+		};
+		extend(_opts,opts);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>cache the width and height</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="keyword">this</span>.width = _opts.width;
+		<span class="keyword">this</span>.height = _opts.height;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>create the canvas context we need</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="keyword">var</span> tmpCanvas = doc.createElement(<span class="string">'canvas'</span>);
+		tmpCanvas.width = <span class="keyword">this</span>.width;
+		tmpCanvas.height = <span class="keyword">this</span>.height;
+		<span class="keyword">this</span>.ctx = canvas.getContext(<span class="string">'2d'</span>);
+		<span class="keyword">this</span>.tmpCtx = tmpCanvas.getContext(<span class="string">'2d'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>setup the worker</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="keyword">if</span>(_opts.useWorker){
+			<span class="keyword">var</span> self = <span class="keyword">this</span>;
+			<span class="keyword">this</span>._queue = [];
+			<span class="keyword">this</span>.worker = <span class="keyword">new</span> Worker(_opts.workerPath);
+			<span class="keyword">this</span>.worker.onmessage = <span class="keyword">function</span>(e){
+				<span class="keyword">var</span> output = self.createImageData(self.width,self.height);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>This is a hack for IE10
+because they don&#39;t have support for Uint8ClampedArray
+and we need to copy the data maunally</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="keyword">if</span>(<span class="keyword">typeof</span> Uint8ClampedArray === <span class="string">"undefined"</span>){
+					<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; e.data.length; i++){
+						output.data[i] = e.data[i];
+					}
+				}
+				<span class="keyword">else</span> {
+					output.data.set(e.data);
+				}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>execute the queue</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; self._queue.length; i++){
+					output.data = self._queue[i](output.data);
+				}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>reset the queue</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				self._queue = [];
+				
+				self.ctx.clearRect(<span class="number">0</span>,<span class="number">0</span>,self.width,self.height);
+				self.ctx.putImageData(output,<span class="number">0</span>,<span class="number">0</span>);
+			};
+			
+			<span class="keyword">this</span>.worker.postMessage({
+				type:<span class="string">'init'</span>,
+				w:<span class="keyword">this</span>.width,
+				h:<span class="keyword">this</span>.height
+			});
+		}
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Utility functions</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	extend(fx.prototype,{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h1>Class Method: load</h1>
+<p>Loads an image to the canvas</p>
+<h2>Options</h2>
+<ul>
+<li><code>url</code> : The image&#39;s URL</li>
+<li><code>resize</code> <em>Optional</em> : whether to strecth the image to fit the canvas.</li>
+<li><code>cb</code> : The callback after the image has finished loading.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		load:<span class="keyword">function</span>(url, resize, cb){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>If resize parameter is missing, we swap the variables.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">if</span>(<span class="keyword">typeof</span> resize == <span class="string">"function"</span>){
+				cb = resize;
+				resize = <span class="literal">true</span>;
+			}
+			resize = <span class="keyword">typeof</span> resize !== <span class="string">"undefined"</span> ? resize : <span class="literal">true</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Create a new inage object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> img = <span class="keyword">new</span> Image();
+			<span class="keyword">var</span> self = <span class="keyword">this</span>;
+			img.onload = <span class="keyword">function</span>(){
+				<span class="keyword">if</span>(resize){
+					self.ctx.drawImage(<span class="keyword">this</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height,<span class="number">0</span>,<span class="number">0</span>,self.width,self.height);
+					self.tmpCtx.drawImage(<span class="keyword">this</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height,<span class="number">0</span>,<span class="number">0</span>,self.width,self.height);
+				}
+				<span class="keyword">else</span> {
+					self.ctx.drawImage(<span class="keyword">this</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+					self.tmpCtx.drawImage(<span class="keyword">this</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+				}
+				cb.call(self);
+			};
+			img.crossOrigin = <span class="literal">true</span>;
+			img.src = url;
+			<span class="keyword">return</span> <span class="keyword">this</span>
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <h1>Class Method: restore</h1>
+<p>Restore the previous saved state</p>
+<h2>Options</h2>
+<ul>
+<li>No options</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		restore:<span class="keyword">function</span>(){
+			<span class="keyword">this</span>.ctx.clearRect(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+			<span class="keyword">this</span>.ctx.drawImage(<span class="keyword">this</span>.tmpCtx.canvas,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+			<span class="keyword">return</span> <span class="keyword">this</span>;
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h1>Class Method: save</h1>
+<p>Saves the state of the canvas</p>
+<h2>Options</h2>
+<ul>
+<li>No options</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		save:<span class="keyword">function</span>(){
+			<span class="keyword">this</span>.tmpCtx.clearRect(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+			<span class="keyword">this</span>.tmpCtx.drawImage(<span class="keyword">this</span>.ctx.canvas,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+			<span class="keyword">return</span> <span class="keyword">this</span>;
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <h1>Class Method: toDataUrl</h1>
+<p>Snapshots the canvas as a base64-encoded PNG image</p>
+<h2>Options</h2>
+<ul>
+<li>No options</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		toDataURL:<span class="keyword">function</span>(){
+			<span class="keyword">return</span> <span class="keyword">this</span>.ctx.canvas.toDataURL(<span class="string">'image/png'</span>);
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h1>Class Method: process</h1>
+<p>Process the canvas with custom functions.
+The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</code>,<code>a</code>,<code>x</code>,<code>y</code>.
+<code>r</code>,<code>g</code>,<code>b</code>,<code>a</code> are the colour values and <code>x</code>,<code>y</code> are the current pixel position.</p>
+<p>The function should return an array contain the four colour values in the order of <code>r</code>, <code>g</code>, <code>b</code>, <code>a</code>.</p>
+<h2>Options</h2>
+<ul>
+<li><code>func</code> : The processing function</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		process:<span class="keyword">function</span>(func){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Get the pixel values</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> pix = <span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Loop through the pixels</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">for</span>(<span class="keyword">var</span> x = <span class="number">0</span>; x &lt; <span class="keyword">this</span>.width; x++){
+				<span class="keyword">for</span>(<span class="keyword">var</span> y = <span class="number">0</span>; y &lt; <span class="keyword">this</span>.height; y++){
+					<span class="keyword">var</span> i = (y*<span class="keyword">this</span>.width+x)*<span class="number">4</span>;
+					<span class="keyword">var</span> r = pix.data[i], g = pix.data[i+<span class="number">1</span>], b = pix.data[i+<span class="number">2</span>], a = pix.data[i+<span class="number">3</span>];
+					<span class="keyword">var</span> ret = func(r,g,b,a,x,y);
+					pix.data[i] = ret[<span class="number">0</span>];
+					pix.data[i+<span class="number">1</span>] = ret[<span class="number">1</span>];
+					pix.data[i+<span class="number">2</span>] = ret[<span class="number">2</span>];
+					pix.data[i+<span class="number">3</span>] = ret[<span class="number">3</span>];
+				}
+			}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Put the image back to the canvas</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">this</span>.ctx.clearRect(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+			<span class="keyword">this</span>.ctx.putImageData(pix,<span class="number">0</span>,<span class="number">0</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>;
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <h1>Class Method: getContext</h1>
+<p>Gets the raw canvas context</p>
+<h2>Options</h2>
+<ul>
+<li>No options</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		getContext:<span class="keyword">function</span>(){
+			<span class="keyword">return</span> <span class="keyword">this</span>.ctx;
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <h1>Class Method: luminance</h1>
+<p>Calculates the CIE luminance from RGB values</p>
+<h2>Options</h2>
+<ul>
+<li><code>r</code> : The red component</li>
+<li><code>g</code> : The green component</li>
+<li><code>b</code> : The blue component</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		luminance:<span class="keyword">function</span>(r,g,b){
+			<span class="keyword">return</span> <span class="number">0.2126</span>*r + <span class="number">0.7152</span>*g + <span class="number">0.0722</span>*b;
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <h1>Class Method: createImageData</h1>
+<p>Creates an empty image</p>
+<h2>Options</h2>
+<ul>
+<li><code>w</code> : The width of the image</li>
+<li><code>h</code> : The height of the image</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		createImageData:<span class="keyword">function</span>(w,h){
+			<span class="keyword">return</span> <span class="keyword">this</span>.tmpCtx.createImageData(w,h);
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <h1>Class Method: toHSL</h1>
+<p>Converts RGB colours to HSL colours</p>
+<h2>Options</h2>
+<ul>
+<li><code>r</code> : The red component</li>
+<li><code>g</code> : The green component</li>
+<li><code>b</code> : The blue component</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		toHSL:<span class="keyword">function</span>(r,g,b){
+			r /= <span class="number">255</span>;
+			g /= <span class="number">255</span>;
+			b /= <span class="number">255</span>;
+			<span class="keyword">var</span> max = m.max(r,g,b);
+			<span class="keyword">var</span> min = m.min(r,g,b);
+			<span class="keyword">var</span> h, s, l = (max+min)/<span class="number">2</span>;
+			
+			<span class="keyword">if</span>(max === min){
+				h = s = <span class="number">0</span>;
+			}
+			<span class="keyword">else</span> {
+				<span class="keyword">var</span> d = max - min;
+				s = l &gt; <span class="number">0.5</span> ? d / (<span class="number">2</span> - max - min) : d / (max + min);
+				<span class="keyword">switch</span>(max){
+					<span class="keyword">case</span> r:
+					h = (g - b) / d + (g &lt; b ? <span class="number">6</span> : <span class="number">0</span>);
+					<span class="keyword">break</span>;
+					
+					<span class="keyword">case</span> g:
+					h = (b - r) / d + <span class="number">2</span>;
+					<span class="keyword">break</span>;
+					
+					<span class="keyword">case</span> b:
+					h = (r - g) / d + <span class="number">4</span>;
+					<span class="keyword">break</span>;
+				}
+			}
+			h /= <span class="number">6</span>;
+			<span class="keyword">return</span> {
+				h:h,
+				s:s,
+				l:l
+			};
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <h1>Class Method: toRGB</h1>
+<p>Converts HSL colours to RGB colours</p>
+<h2>Options</h2>
+<ul>
+<li><code>h</code> : The hue</li>
+<li><code>s</code> : The saturation</li>
+<li><code>l</code> : The lightness</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		toRGB:<span class="keyword">function</span>(h,s,l){
+			<span class="keyword">var</span> r, g, b;
+			<span class="keyword">if</span>(s == <span class="number">0</span>)
+			{
+				r = g = b = l; <span class="comment">//achromatic</span>
+			}
+			<span class="keyword">else</span>
+			{
+				<span class="function"><span class="keyword">function</span> <span class="title">hue2rgb</span><span class="params">(p, q, t)</span>{</span>
+					<span class="keyword">if</span>(t &lt; <span class="number">0</span>) t += <span class="number">1</span>;
+					<span class="keyword">if</span>(t &gt; <span class="number">1</span>) t -= <span class="number">1</span>;
+					<span class="keyword">if</span>(t &lt; <span class="number">1</span>/<span class="number">6</span>) <span class="keyword">return</span> p + (q - p) * <span class="number">6</span> * t;
+					<span class="keyword">if</span>(t &lt; <span class="number">1</span>/<span class="number">2</span>) <span class="keyword">return</span> q;
+					<span class="keyword">if</span>(t &lt; <span class="number">2</span>/<span class="number">3</span>) <span class="keyword">return</span> p + (q - p) * (<span class="number">2</span>/<span class="number">3</span> - t) * <span class="number">6</span>;
+					<span class="keyword">return</span> p;
+				}
+				
+				<span class="keyword">var</span> q = l &lt; <span class="number">0.5</span> ? l * (<span class="number">1</span> + s) : l + s - l * s;
+				<span class="keyword">var</span> p = <span class="number">2</span> * l - q;
+				r = hue2rgb(p, q, h + <span class="number">1</span>/<span class="number">3</span>);
+				g = hue2rgb(p, q, h);
+				b = hue2rgb(p, q, h - <span class="number">1</span>/<span class="number">3</span>);
+			}
+			<span class="keyword">return</span> {
+				r:r*<span class="number">255</span>,
+				g:g*<span class="number">255</span>,
+				b:b*<span class="number">255</span>
+			};
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <h1>Class Method: colorTemptoRGB</h1>
+<p>Converts colour temperatures to RGB colours</p>
+<h2>Options</h2>
+<ul>
+<li><code>temp</code> : The colour temperature</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		colorTempToRGB:<span class="keyword">function</span>(temp){
+			temp /= <span class="number">100</span>;
+			<span class="keyword">var</span> r, g, b;
+            
+			<span class="keyword">if</span>(temp &lt;= <span class="number">66</span>){
+				r = <span class="number">255</span>;
+				g = m.min(m.max(<span class="number">99.4708025861</span> * m.log(temp) - <span class="number">161.1195681661</span>,<span class="number">0</span>),<span class="number">255</span>);
+			}
+			<span class="keyword">else</span> {
+				r = m.min(m.max(<span class="number">329.698727446</span> * m.pow(temp-<span class="number">60</span>,-<span class="number">0.1332047592</span>),<span class="number">0</span>),<span class="number">255</span>);
+				g = m.min(m.max(<span class="number">288.1221695283</span> * m.pow(temp-<span class="number">60</span>,-<span class="number">0.0755148492</span>),<span class="number">0</span>),<span class="number">255</span>);
+			}
+			
+			<span class="keyword">if</span>(temp &gt;= <span class="number">66</span>){
+				b = <span class="number">255</span>;
+			}
+			<span class="keyword">else</span> <span class="keyword">if</span>(temp &lt;= <span class="number">19</span>){
+				b = <span class="number">0</span>;
+			}
+			<span class="keyword">else</span> {
+				b = temp - <span class="number">10</span>;
+				b = m.min(m.max(<span class="number">138.5177312231</span> * m.log(b) - <span class="number">305.0447927307</span>,<span class="number">0</span>),<span class="number">255</span>);
+			}
+			
+			<span class="keyword">return</span> {
+				r:r,
+				g:g,
+				b:b
+			}
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <h1>Class Method: equalizeHistogram</h1>
+<p>Do equalizations on a set of data</p>
+<h2>Options</h2>
+<ul>
+<li><code>src</code> : The source data</li>
+<li><code>dst</code> <em>Optional</em> : The destination where the result will be written. If omitted, the source will be overwritten.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		equalizeHistogram:<span class="keyword">function</span>(src,dst){
+			<span class="keyword">var</span> sLen = src.length;
+			<span class="keyword">if</span>(!dst) dst = src;
+			<span class="keyword">var</span> hist = <span class="keyword">new</span> Float32Array(<span class="number">256</span>), sum = <span class="number">0</span>;
+			<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; sLen; ++i){
+				++hist[~~src[i]];
+				++sum;
+			}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>Compute integral histogram:</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> prev = hist[<span class="number">0</span>];
+			<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">1</span>; i &lt; <span class="number">256</span>; ++i){
+				prev = hist[i] += prev;
+			}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>Equalize image:</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> norm = <span class="number">255</span> / sum;
+			<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; sLen; ++i) {
+				dst[i] = hist[~~src[i]] * norm;
+			}
+			<span class="keyword">return</span> dst;
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <h1>Class Method: toWorker</h1>
+<p>Sends graphics commands to Web Worker
+<em> This is only for internal use only </em></p>
+<h2>Options</h2>
+<ul>
+<li><code>param</code> : The parameters to pass</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		_toWorker:<span class="keyword">function</span>(params){
+			<span class="keyword">if</span>(<span class="keyword">this</span>.worker){
+				extend(params,{
+					data:<span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height).data
+				});
+				<span class="keyword">this</span>.worker.postMessage(params);
+				<span class="keyword">return</span> <span class="keyword">this</span>;
+			}
+			<span class="keyword">else</span> {
+				assert(<span class="literal">false</span>, <span class="string">'No web worker support!'</span>);
+			}
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <h1>Class Method: queue</h1>
+<p>Queue the next effect operation to be called
+<em> This is only useful with effects handled with Web Workers, currently only convolution effects </em></p>
+<h2>Options</h2>
+<ul>
+<li><code>func</code> : The function to execute</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		queue:<span class="keyword">function</span>(func){
+			<span class="keyword">if</span>(!<span class="keyword">this</span>.worker){
+				<span class="keyword">var</span> pix = <span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+				pix.data = func(pix.data);
+				<span class="keyword">this</span>.ctx.putImageData(pix,<span class="number">0</span>,<span class="number">0</span>);
+			}
+			<span class="keyword">else</span> <span class="keyword">this</span>._queue.push(func);
+			<span class="keyword">return</span> <span class="keyword">this</span>;
+		}
+	});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>colour effects</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	extend(fx.prototype,{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <h1>Class Method: greyscale</h1>
+<p>Makes the image Black &amp; White</p>
+<h2>Options</h2>
+<ul>
+<li><code>mix</code> : The blending ratio between the original image &amp; the greyscaled image.<pre><code>    1 is completely B/W &amp; 0 is the original image</code></pre>
+</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		greyscale:<span class="keyword">function</span>(mix){
+			mix = mix === <span class="literal">undefined</span> ? <span class="number">1</span> : m.min(m.max(mix,<span class="number">0</span>),<span class="number">1</span>);
+			<span class="keyword">var</span> self = <span class="keyword">this</span>;
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">var</span> l = self.luminance(r,g,b);
+				<span class="keyword">return</span> [l*mix+r*(<span class="number">1</span>-mix),l*mix+g*(<span class="number">1</span>-mix),l*mix+b*(<span class="number">1</span>-mix),a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <h1>Class Method: greyscale</h1>
+<p>Makes the image Black &amp; White, only</p>
+<h2>Options</h2>
+<ul>
+<li><code>threshold</code> : The threshold rate</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		threshold:<span class="keyword">function</span>(threshold){
+			threshold = threshold || <span class="number">127</span>;
+			<span class="keyword">var</span> self = <span class="keyword">this</span>;
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">var</span> l = self.luminance(r,g,b) &gt; threshold ? <span class="number">255</span>: <span class="number">0</span>;
+				<span class="keyword">return</span> [l,l,l,a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <h1>Class Method: invert</h1>
+<p>Makes the image has a X-Ray feel.</p>
+<h2>Options</h2>
+<ul>
+<li><code>mix</code> : The blending ratio between the original image &amp; the inverted image.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		invert:<span class="keyword">function</span>(mix){
+			mix = mix === <span class="literal">undefined</span> ? <span class="number">1</span> : m.min(m.max(mix,<span class="number">0</span>),<span class="number">1</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">return</span> [(<span class="number">255</span>-r)*mix+r*(<span class="number">1</span>-mix),(<span class="number">255</span>-g)*mix+g*(<span class="number">1</span>-mix),(<span class="number">255</span>-b)*mix+b*(<span class="number">1</span>-mix),a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <h1>Class Method: sepia</h1>
+<p>Gives the image an old yellowish look</p>
+<h2>Options</h2>
+<ul>
+<li><code>mix</code> : The blending ratio between the original image &amp; the sepia&#39;ed image.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		sepia:<span class="keyword">function</span>(mix){
+			mix = mix === <span class="literal">undefined</span> ? <span class="number">1</span> : m.min(m.max(mix,<span class="number">0</span>),<span class="number">1</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">var</span> nr = (<span class="number">0.393</span> * r + <span class="number">0.769</span> * g + <span class="number">0.189</span> * b) * mix + r * (<span class="number">1</span> - mix);
+				<span class="keyword">var</span> ng = (<span class="number">0.349</span> * r + <span class="number">0.686</span> * g + <span class="number">0.168</span> * b) * mix + g * (<span class="number">1</span> - mix);
+				<span class="keyword">var</span> nb = (<span class="number">0.272</span> * r + <span class="number">0.534</span> * g + <span class="number">0.131</span> * b) * mix + b * (<span class="number">1</span> - mix);
+				<span class="keyword">return</span> [nr,ng,nb,a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <h1>Class Method: hdr</h1>
+<p>Simulates High Dynamic Range (HDR) by changing contrast sinsounaously.</p>
+<h2>Options</h2>
+<ul>
+<li>No Options</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		hdr:<span class="keyword">function</span>(){
+			<span class="keyword">var</span> changeContrast = <span class="keyword">function</span>(v){
+				<span class="keyword">if</span>(v &gt; <span class="number">0</span> &amp;&amp; v &lt;= <span class="number">127</span>){
+					v = m.sin(m.PI * (<span class="number">90</span>-v/<span class="number">4</span>) / <span class="number">180</span>) * v;
+				}
+				<span class="keyword">else</span> <span class="keyword">if</span>(v &gt; <span class="number">127</span>){
+					v = m.sin(m.PI * (<span class="number">90</span>-(<span class="number">255</span>-v)/<span class="number">4</span>) / <span class="number">180</span>) * v;
+				}
+				<span class="keyword">return</span> v;
+			};
+			
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">return</span> [
+					changeContrast(r),
+					changeContrast(g),
+					changeContrast(b),
+					a
+				];
+			});
+		}
+	});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>Special effects</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	extend(fx.prototype,{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <h1>Class Method: noise</h1>
+<p>Generating noise by changing the brightness randomly.</p>
+<h2>Options</h2>
+<ul>
+<li><code>amt</code> : The amount of noisiness</li>
+<li><code>alphanoise</code> : Also generate noise on alpha channels.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		noise:<span class="keyword">function</span>(amt,alphanoise){
+			assert(amt &gt;= <span class="number">0</span>,<span class="string">"Noise amount must be a positive number."</span>);
+			alphanoise = alphanoise || <span class="literal">false</span>;
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">var</span> noise = -amt/<span class="number">2</span> + m.random() * amt * <span class="number">2</span>;
+				<span class="keyword">return</span> [r+noise,g+noise,b+noise,alphanoise ? a + noise : a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <h1>Class Method: glow</h1>
+<p>Make the image glows.</p>
+<h2>Options</h2>
+<ul>
+<li><code>radius</code> : The amount of glow</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		glow:<span class="keyword">function</span>(radius){
+			<span class="keyword">var</span> self = <span class="keyword">this</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>Blur it first</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">this</span>.blur(radius);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p>Apply a screen filter with the original image to make the glowing feel</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> <span class="keyword">this</span>.queue(<span class="keyword">function</span>(data){
+				<span class="keyword">var</span> orig = self.ctx.getImageData(<span class="number">0</span>,<span class="number">0</span>,self.width,self.height);
+				<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; data.length; i += <span class="number">4</span>){
+					data[i] = <span class="number">255</span> - (((<span class="number">255</span> - data[i]) * (<span class="number">255</span> - orig.data[i])) / <span class="number">255</span>);
+					data[i+<span class="number">1</span>] = <span class="number">255</span> - (((<span class="number">255</span> - data[i+<span class="number">1</span>]) * (<span class="number">255</span> - orig.data[i+<span class="number">1</span>])) / <span class="number">255</span>);
+					data[i+<span class="number">2</span>] = <span class="number">255</span> - (((<span class="number">255</span> - data[i+<span class="number">2</span>]) * (<span class="number">255</span> - orig.data[i+<span class="number">2</span>])) / <span class="number">255</span>);
+					data[i+<span class="number">3</span>] = <span class="number">255</span> - (((<span class="number">255</span> - data[i+<span class="number">3</span>]) * (<span class="number">255</span> - orig.data[i+<span class="number">3</span>])) / <span class="number">255</span>);
+				}
+				<span class="keyword">return</span> data;
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <h1>Class Method: colorMatrix</h1>
+<p>Apply a 5x5 colour matrix to the image</p>
+<h2>Options</h2>
+<ul>
+<li><code>matrix</code> : The colour matrix</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		colorMatrix:<span class="keyword">function</span>(matrix){
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">var</span> nr = r * matrix[<span class="number">0</span>] + g * matrix[<span class="number">1</span>] + b * matrix[<span class="number">2</span>] + a * matrix[<span class="number">3</span>] + <span class="number">255</span> * matrix[<span class="number">20</span>];
+				<span class="keyword">var</span> ng = r * matrix[<span class="number">5</span>] + g * matrix[<span class="number">6</span>] + b * matrix[<span class="number">7</span>] + a * matrix[<span class="number">8</span>] + <span class="number">255</span> * matrix[<span class="number">21</span>];
+				<span class="keyword">var</span> nb = r * matrix[<span class="number">10</span>] + g * matrix[<span class="number">11</span>] + b * matrix[<span class="number">12</span>] + a * matrix[<span class="number">13</span>] + <span class="number">255</span> * matrix[<span class="number">22</span>];
+				<span class="keyword">var</span> na = r * matrix[<span class="number">15</span>] + g * matrix[<span class="number">16</span>] + b * matrix[<span class="number">17</span>] + a * matrix[<span class="number">18</span>] + <span class="number">255</span> * matrix[<span class="number">23</span>];
+				<span class="keyword">return</span> [nr,ng,nb,na];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <h1>Class Method: equalize</h1>
+<p>Equalize the image.</p>
+<h2>Options</h2>
+<ul>
+<li>No options</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		equalize:<span class="keyword">function</span>(){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p>Calculate the brightness first</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> self = <span class="keyword">this</span>, table = <span class="keyword">new</span> Uint8ClampedArray(<span class="keyword">this</span>.width*<span class="keyword">this</span>.height), i = <span class="number">0</span>;
+			<span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				table[i] = self.luminance(r,g,b);
+				i++;
+				<span class="keyword">return</span> [r,g,b,a];
+			});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <p>Then equalize the data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">this</span>.equalizeHistogram(table);
+			i = <span class="number">0</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p>Finally, change the brightness of every pixel</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">var</span> hsl = self.toHSL(r,g,b);
+				hsl.l = table[i] / <span class="number">255</span>;
+				i++;
+				<span class="keyword">var</span> rgb = self.toRGB(hsl.h,hsl.s,hsl.l);
+				<span class="keyword">return</span> [rgb.r,rgb.g,rgb.b,a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <h1>Class Method: TV</h1>
+<p>Adds old TV feel to the image.</p>
+<h2>Options</h2>
+<ul>
+<li>No options</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		tv:<span class="keyword">function</span>(){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p>Add same scanlines to the image
+TODO: Make the scanline level adjustable</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a,x,y){
+				<span class="keyword">var</span> br = m.sin(y) * <span class="number">80</span>;
+				<span class="keyword">return</span> [
+					r - br,
+					g - br,
+					b - br,
+					a
+				];
+			});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <p>Generate some noise on the image
+TODO: Improve the noise generation algorithm</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> <span class="keyword">this</span>.noise(<span class="number">50</span>);
+		}
+	});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-54">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-54">&#182;</a>
+              </div>
+              <p>Here are the adjustments</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	extend(fx.prototype,{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-55">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-55">&#182;</a>
+              </div>
+              <h1>Class Method: hue</h1>
+<p>Adjust the hue or change the hue of an image.</p>
+<h2>Options</h2>
+<ul>
+<li><code>hue</code> : The hue adjustment</li>
+<li><code>colorize</code> : Whether to chang the hue or to adjust the hue</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		hue:<span class="keyword">function</span>(hue,colorize){
+			assert(hue !== <span class="literal">undefined</span>,<span class="string">"Hue must be specified."</span>)
+			<span class="keyword">var</span> self = <span class="keyword">this</span>;
+			colorize = colorize || <span class="literal">false</span>;
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">var</span> hsl = self.toHSL(r,g,b);
+				<span class="keyword">if</span>(colorize){
+					hsl.h = hue / <span class="number">360</span>;
+				}
+				<span class="keyword">else</span> {
+					hsl.h = hsl.h + hue / <span class="number">360</span>;
+				}
+				<span class="keyword">var</span> rgb = self.toRGB(hsl.h,hsl.s,hsl.l);
+				<span class="keyword">return</span> [rgb.r,rgb.g,rgb.b,a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-56">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-56">&#182;</a>
+              </div>
+              <h1>Class Method: saturation</h1>
+<p>Adjust the saturation or change the saturation of an image.</p>
+<h2>Options</h2>
+<ul>
+<li><code>sat</code> : The saturation adjustment</li>
+<li><code>colorize</code> : Whether to chang the saturation or to adjust the hue</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		saturation:<span class="keyword">function</span>(sat,colorize){
+			assert(sat !== <span class="literal">undefined</span>,<span class="string">"Saturation must be specified."</span>)
+			<span class="keyword">var</span> self = <span class="keyword">this</span>;
+			colorize = colorize || <span class="literal">false</span>;
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">var</span> hsl = self.toHSL(r,g,b);
+				<span class="keyword">if</span>(colorize){
+					hsl.s = m.min(m.max(sat,<span class="number">0</span>),<span class="number">1</span>);
+				}
+				<span class="keyword">else</span> {
+					hsl.s = m.min(m.max(hsl.s + sat,<span class="number">0</span>),<span class="number">1</span>);
+				}
+				<span class="keyword">var</span> rgb = self.toRGB(hsl.h,hsl.s,hsl.l);
+				<span class="keyword">return</span> [rgb.r,rgb.g,rgb.b,a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <h1>Class Method: brightness</h1>
+<p>Adjust the brightness of an image.</p>
+<h2>Options</h2>
+<ul>
+<li><code>brightness</code> : The brightness adjustment</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		brightness:<span class="keyword">function</span>(brightness){
+			assert(brightness !== <span class="literal">undefined</span>,<span class="string">"Brightness must be set"</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">return</span> [r+brightness,g+brightness,b+brightness,a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-58">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-58">&#182;</a>
+              </div>
+              <h1>Class Method: contrast</h1>
+<p>Adjust the contrast of an image.</p>
+<h2>Options</h2>
+<ul>
+<li><code>level</code> : The contrast adjustment</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		contrast:<span class="keyword">function</span>(level){
+			assert(level !== <span class="literal">undefined</span>,<span class="string">"Contrast level must be set."</span>);
+			<span class="keyword">var</span> self = <span class="keyword">this</span>;
+			level = m.pow((level+<span class="number">100</span>)/<span class="number">100</span>,<span class="number">2</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">return</span> [((r/<span class="number">255</span>-<span class="number">0.5</span>)*level+<span class="number">0.5</span>)*<span class="number">255</span>,((g/<span class="number">255</span>-<span class="number">0.5</span>)*level+<span class="number">0.5</span>)*<span class="number">255</span>,((b/<span class="number">255</span>-<span class="number">0.5</span>)*level+<span class="number">0.5</span>)*<span class="number">255</span>,a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-59">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-59">&#182;</a>
+              </div>
+              <h1>Class Method: gamma</h1>
+<p>Adjust the gamma of an image.</p>
+<h2>Options</h2>
+<ul>
+<li><code>gamma</code> : The gamma adjustment</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		gamma:<span class="keyword">function</span>(gamma){
+			assert(gamma !== <span class="literal">undefined</span>,<span class="string">"Gamma level must be set."</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">return</span> [r*gamma,g*gamma,b*gamma,a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-60">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-60">&#182;</a>
+              </div>
+              <h1>Class Method: gammaRGB</h1>
+<p>Adjust the gamma of an image on different RGB channels.</p>
+<h2>Options</h2>
+<ul>
+<li><code>lr</code> : The red gamma adjustment</li>
+<li><code>lg</code> : The green gamma adjustment</li>
+<li><code>lb</code> : The blue gamma adjustment</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		gammaRGB:<span class="keyword">function</span>(lr,lg,lb){
+			assert(lr !== <span class="literal">undefined</span> &amp;&amp; lg !== <span class="literal">undefined</span> &amp;&amp; lb !== <span class="literal">undefined</span>,<span class="string">"Gamma level must be set."</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">return</span> [r*lr,g*lg,b*lb,a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-61">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-61">&#182;</a>
+              </div>
+              <h1>Class Method: vibrance</h1>
+<p>Adjust the vibrance of an image.</p>
+<h2>Options</h2>
+<ul>
+<li><code>level</code> : The vibrance adjustment</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		vibrance:<span class="keyword">function</span>(level){
+			assert(level !== <span class="literal">undefined</span>,<span class="string">"Vibrance level must be set."</span>);
+			level *= -<span class="number">1</span>;
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">var</span> max = m.max(r,g,b), avg = (r+g+b)/<span class="number">3</span>, amt = ((m.abs(max - avg) * <span class="number">2</span> / <span class="number">255</span>) * level) / <span class="number">100</span>;
+				<span class="keyword">if</span>(r !== max){
+					r += (max - r) * amt;
+				}
+				<span class="keyword">if</span>(g !== max){
+					g += (max - g) * amt;
+				}
+				<span class="keyword">if</span>(b !== max){
+					b += (max - b) * amt;
+				}
+				<span class="keyword">return</span> [r,g,b,a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-62">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-62">&#182;</a>
+              </div>
+              <h1>Class Method: whiteBalance</h1>
+<p>Adjust the white balance of an image.</p>
+<h2>Options</h2>
+<ul>
+<li><code>level</code> : The colour temperature</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		whiteBalance:<span class="keyword">function</span>(temp){
+			<span class="keyword">var</span> color = <span class="keyword">this</span>.colorTempToRGB(temp);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+				<span class="keyword">var</span> nr = r * (<span class="number">255</span> / color.r);
+				<span class="keyword">var</span> ng = g * (<span class="number">255</span> / color.g);
+				<span class="keyword">var</span> nb = b * (<span class="number">255</span> / color.b);
+				<span class="keyword">return</span> [nr,ng,nb,a];
+			});
+		}
+	});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-63">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-63">&#182;</a>
+              </div>
+              <p>Convolution effects</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	extend(fx.prototype,{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-64">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-64">&#182;</a>
+              </div>
+              <h1>Class Method: convolute</h1>
+<p>Apply a convolution matrix of any size to the image</p>
+<h2>Options</h2>
+<ul>
+<li><code>weights</code> : The convolution matrix. It must be a <em>square</em> matrix.</li>
+<li><code>offset</code> : The offset of the convoluted result</li>
+<li><code>opaque</code> : Whether not to handle the alpha component and make the image non-transparent.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		convolute:<span class="keyword">function</span>(weights, offset, opaque){
+			assert(weights !== <span class="literal">undefined</span>,<span class="string">"Convolution matrix must be set."</span>);
+			assert(offset !== <span class="literal">undefined</span>,<span class="string">"Offset must be set."</span>);
+			opaque = opaque || <span class="literal">true</span>;
+
+			<span class="keyword">if</span>(<span class="keyword">this</span>.worker){
+				<span class="keyword">this</span>._toWorker({
+					type:<span class="string">'convolute'</span>,
+					matrix:weights,
+					offset:offset,
+					opaque:opaque
+				});
+			}
+			<span class="keyword">else</span> {
+				<span class="keyword">var</span> pixels = <span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+				<span class="keyword">var</span> side = m.round(m.sqrt(weights.length));
+				<span class="keyword">var</span> halfSide = m.floor(side/<span class="number">2</span>);
+				<span class="keyword">var</span> src = pixels.data;
+				<span class="keyword">var</span> sw = pixels.width;
+				<span class="keyword">var</span> sh = pixels.height;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-65">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-65">&#182;</a>
+              </div>
+              <p>pad output by the convolution matrix</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="keyword">var</span> w = sw;
+				<span class="keyword">var</span> h = sh;
+				<span class="keyword">var</span> output = <span class="keyword">this</span>.createImageData(w, h);
+				<span class="keyword">var</span> dst = output.data;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-66">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-66">&#182;</a>
+              </div>
+              <p>go through the destination image pixels</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="keyword">var</span> alphaFac = opaque ? <span class="number">1</span> : <span class="number">0</span>;
+				<span class="keyword">for</span>(<span class="keyword">var</span> y=<span class="number">0</span>; y&lt;h; y++){
+					<span class="keyword">for</span>(<span class="keyword">var</span> x=<span class="number">0</span>; x&lt;w; x++){
+						<span class="keyword">var</span> sy = y;
+						<span class="keyword">var</span> sx = x;
+						<span class="keyword">var</span> dstOff = (y*w+x)*<span class="number">4</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-67">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <p>calculate the weighed sum of the source image pixels that
+fall under the convolution matrix</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						<span class="keyword">var</span> r=<span class="number">0</span>, g=<span class="number">0</span>, b=<span class="number">0</span>, a=<span class="number">0</span>;
+						<span class="keyword">for</span>(<span class="keyword">var</span> cy=<span class="number">0</span>; cy&lt;side; cy++){
+							<span class="keyword">for</span>(<span class="keyword">var</span> cx=<span class="number">0</span>; cx&lt;side; cx++){
+								<span class="keyword">var</span> scy = sy + cy - halfSide;
+								<span class="keyword">var</span> scx = sx + cx - halfSide;
+								<span class="keyword">if</span>(scy &gt;= <span class="number">0</span> &amp;&amp; scy &lt; sh &amp;&amp; scx &gt;= <span class="number">0</span> &amp;&amp; scx &lt; sw){
+									<span class="keyword">var</span> srcOff = (scy*sw+scx)*<span class="number">4</span>;
+									<span class="keyword">var</span> wt = weights[cy*side+cx];
+									r += src[srcOff] * wt;
+									g += src[srcOff+<span class="number">1</span>] * wt;
+									b += src[srcOff+<span class="number">2</span>] * wt;
+									a += src[srcOff+<span class="number">3</span>] * wt;
+								}
+							}
+						}
+						dst[dstOff] = offset+r;
+						dst[dstOff+<span class="number">1</span>] = offset+g;
+						dst[dstOff+<span class="number">2</span>] = offset+b;
+						dst[dstOff+<span class="number">3</span>] = a + alphaFac*(<span class="number">255</span>-a);
+					}
+				}
+				<span class="keyword">this</span>.ctx.clearRect(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+				<span class="keyword">this</span>.ctx.putImageData(output,<span class="number">0</span>,<span class="number">0</span>);
+			}
+			<span class="keyword">return</span> <span class="keyword">this</span>;
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-68">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-68">&#182;</a>
+              </div>
+              <h1>Class Method: blur</h1>
+<p>Apply box blur to the image.</p>
+<h2>Options</h2>
+<ul>
+<li><code>level</code> : The blur radius</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		blur:<span class="keyword">function</span>(level){
+			assert(level !== <span class="literal">undefined</span>,<span class="string">"Blur radius must be set."</span>);
+			<span class="keyword">var</span> len = level*level;
+			<span class="keyword">var</span> val = <span class="number">1</span>/len;
+			<span class="keyword">var</span> matrix = [];
+			<span class="keyword">if</span>(len &lt; <span class="number">4</span>){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-69">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-69">&#182;</a>
+              </div>
+              <p>if the length of the matrix is less than 4,
+it means that the blur radius is less than 2. There&#39;s no need to blur.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="keyword">return</span> <span class="keyword">this</span>;
+			}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-70">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-70">&#182;</a>
+              </div>
+              <p>Fill up our convolution matrix with values</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">while</span>(len--){
+				matrix.push(val);
+			}
+			<span class="keyword">return</span> <span class="keyword">this</span>.convolute(matrix,<span class="number">0</span>,<span class="literal">false</span>);
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-71">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-71">&#182;</a>
+              </div>
+              <h1>Class Method: sharpen</h1>
+<p>Sharpen the image</p>
+<h2>Options</h2>
+<ul>
+<li><em>No options</em></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		sharpen:<span class="keyword">function</span>(){
+			<span class="keyword">return</span> <span class="keyword">this</span>.convolute([<span class="number">0</span>,-<span class="number">1</span>,<span class="number">0</span>,-<span class="number">1</span>,<span class="number">5</span>,-<span class="number">1</span>,<span class="number">0</span>,-<span class="number">1</span>,<span class="number">0</span>],<span class="number">0</span>,<span class="literal">false</span>);
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-72">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-72">&#182;</a>
+              </div>
+              <h1>Class Method: emboss</h1>
+<p>Emboss the image</p>
+<h2>Options</h2>
+<ul>
+<li><em>No options</em></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		emboss:<span class="keyword">function</span>(){
+			<span class="keyword">return</span> <span class="keyword">this</span>.convolute([<span class="number">2</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,-<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,-<span class="number">1</span>],<span class="number">127</span>,<span class="literal">false</span>);
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-73">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-73">&#182;</a>
+              </div>
+              <h1>Class Method: findEdges</h1>
+<p>Highlight the edges using a sobel filter.</p>
+<h2>Options</h2>
+<ul>
+<li><em>No options</em></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		findEdges:<span class="keyword">function</span>(){
+			<span class="keyword">return</span> <span class="keyword">this</span>.convolute([-<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,-<span class="number">2</span>,<span class="number">0</span>,<span class="number">2</span>,-<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>],<span class="number">0</span>,<span class="literal">false</span>);
+		}
+	});
+	
+	window[<span class="string">'CanvasEffects'</span>] = fx;
+})(window);</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
