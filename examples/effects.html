@@ -3,7 +3,7 @@
 	<head>
 		<title>CanvasEffect.js image adjustments</title>
 		<link href="bootstrap.min.css" type="text/css" rel="stylesheet" />
-		<script src="../CanvasEffects.min.js"></script>
+		<script src="../CanvasEffects.js"></script>
 		<script src="./dat.gui.min.js"></script>
 		<script>
 		var fx, gui;
@@ -21,6 +21,7 @@
 				greyscale: 0,
 				invert: 0,
 				noise: 0,
+				smoothNoise:0,
 				glow: 0
 			}
 			gui = new dat.GUI();
@@ -28,6 +29,7 @@
 			gui.add(opts,'greyscale',0,1);
 			gui.add(opts,'invert',0,1);
 			gui.add(opts,'noise',0,100);
+			gui.add(opts,'smoothNoise',0,100);
 			gui.add(opts,'glow');
 			
 			for(var i in gui.__controllers){

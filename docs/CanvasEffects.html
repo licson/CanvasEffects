@@ -30,7 +30,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>(<span class="keyword">function</span>(window){</pre></div></div>
+            <div class="content"><div class='highlight'><pre>(<span class="keyword">function</span>(window) {</pre></div></div>
             
         </li>
         
@@ -61,8 +61,8 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> extend = <span class="keyword">function</span>(a,b){
-		<span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> b){
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> extend = <span class="keyword">function</span>(a, b) {
+		<span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> b) {
 			a[i] = b[i];
 		}
 	};</pre></div></div>
@@ -80,9 +80,9 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> assert = <span class="keyword">function</span>(condition,msg){
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> assert = <span class="keyword">function</span>(condition, msg) {
 		msg = msg || <span class="string">''</span>;
-		<span class="keyword">if</span>(!condition){
+		<span class="keyword">if</span> (!condition) {
 			<span class="keyword">throw</span> <span class="keyword">new</span> Error(msg);
 		}
 	};</pre></div></div>
@@ -114,7 +114,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> fx = <span class="keyword">function</span>(canvas,opts){</pre></div></div>
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> fx = <span class="keyword">function</span>(canvas, opts) {</pre></div></div>
             
         </li>
         
@@ -129,15 +129,15 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		assert(canvas.nodeName.toLowerCase() === <span class="string">"canvas"</span>,<span class="string">"A canvas element is excepted."</span>);
-		
+            <div class="content"><div class='highlight'><pre>		assert(canvas.nodeName.toLowerCase() === <span class="string">"canvas"</span>, <span class="string">"A canvas element is excepted."</span>);
+
 		<span class="keyword">var</span> _opts = {
-			width:canvas.width,
-			height:canvas.height,
-			useWorker:<span class="keyword">typeof</span> Worker === <span class="string">"function"</span>,
-			workerPath:<span class="string">'CanvasEffects.worker.js'</span>
+			width: canvas.width,
+			height: canvas.height,
+			useWorker: <span class="keyword">typeof</span> Worker === <span class="string">"function"</span>,
+			workerPath: <span class="string">'CanvasEffects.worker.js'</span>
 		};
-		extend(_opts,opts);</pre></div></div>
+		extend(_opts, opts);</pre></div></div>
             
         </li>
         
@@ -187,12 +187,12 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		<span class="keyword">if</span>(_opts.useWorker){
+            <div class="content"><div class='highlight'><pre>		<span class="keyword">if</span> (_opts.useWorker) {
 			<span class="keyword">var</span> self = <span class="keyword">this</span>;
 			<span class="keyword">this</span>._queue = [];
 			<span class="keyword">this</span>.worker = <span class="keyword">new</span> Worker(_opts.workerPath);
-			<span class="keyword">this</span>.worker.onmessage = <span class="keyword">function</span>(e){
-				<span class="keyword">var</span> output = self.createImageData(self.width,self.height);</pre></div></div>
+			<span class="keyword">this</span>.worker.onmessage = <span class="keyword">function</span>(e) {
+				<span class="keyword">var</span> output = self.createImageData(self.width, self.height);</pre></div></div>
             
         </li>
         
@@ -209,12 +209,11 @@ and we need to copy the data maunally</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>				<span class="keyword">if</span>(<span class="keyword">typeof</span> Uint8ClampedArray === <span class="string">"undefined"</span>){
-					<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; e.data.length; i++){
+            <div class="content"><div class='highlight'><pre>				<span class="keyword">if</span> (<span class="keyword">typeof</span> Uint8ClampedArray === <span class="string">"undefined"</span>) {
+					<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; e.data.length; i++) {
 						output.data[i] = e.data[i];
 					}
-				}
-				<span class="keyword">else</span> {
+				} <span class="keyword">else</span> {
 					output.data.set(e.data);
 				}</pre></div></div>
             
@@ -231,7 +230,7 @@ and we need to copy the data maunally</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>				<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; self._queue.length; i++){
+            <div class="content"><div class='highlight'><pre>				<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; self._queue.length; i++) {
 					output.data = self._queue[i](output.data);
 				}</pre></div></div>
             
@@ -249,15 +248,15 @@ and we need to copy the data maunally</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>				self._queue = [];
-				
-				self.ctx.clearRect(<span class="number">0</span>,<span class="number">0</span>,self.width,self.height);
-				self.ctx.putImageData(output,<span class="number">0</span>,<span class="number">0</span>);
+
+				self.ctx.clearRect(<span class="number">0</span>, <span class="number">0</span>, self.width, self.height);
+				self.ctx.putImageData(output, <span class="number">0</span>, <span class="number">0</span>);
 			};
-			
+
 			<span class="keyword">this</span>.worker.postMessage({
-				type:<span class="string">'init'</span>,
-				w:<span class="keyword">this</span>.width,
-				h:<span class="keyword">this</span>.height
+				type: <span class="string">'init'</span>,
+				w: <span class="keyword">this</span>.width,
+				h: <span class="keyword">this</span>.height
 			});
 		}
 	};</pre></div></div>
@@ -275,7 +274,7 @@ and we need to copy the data maunally</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	extend(fx.prototype,{</pre></div></div>
+            <div class="content"><div class='highlight'><pre>	extend(fx.prototype, {</pre></div></div>
             
         </li>
         
@@ -297,7 +296,7 @@ and we need to copy the data maunally</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		load:<span class="keyword">function</span>(url, resize, cb){</pre></div></div>
+            <div class="content"><div class='highlight'><pre>		load: <span class="keyword">function</span>(url, resize, cb) {</pre></div></div>
             
         </li>
         
@@ -312,7 +311,7 @@ and we need to copy the data maunally</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">if</span>(<span class="keyword">typeof</span> resize == <span class="string">"function"</span>){
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">if</span> (<span class="keyword">typeof</span> resize == <span class="string">"function"</span>) {
 				cb = resize;
 				resize = <span class="literal">true</span>;
 			}
@@ -333,14 +332,13 @@ and we need to copy the data maunally</p>
             
             <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> img = <span class="keyword">new</span> Image();
 			<span class="keyword">var</span> self = <span class="keyword">this</span>;
-			img.onload = <span class="keyword">function</span>(){
-				<span class="keyword">if</span>(resize){
-					self.ctx.drawImage(<span class="keyword">this</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height,<span class="number">0</span>,<span class="number">0</span>,self.width,self.height);
-					self.tmpCtx.drawImage(<span class="keyword">this</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height,<span class="number">0</span>,<span class="number">0</span>,self.width,self.height);
-				}
-				<span class="keyword">else</span> {
-					self.ctx.drawImage(<span class="keyword">this</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
-					self.tmpCtx.drawImage(<span class="keyword">this</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+			img.onload = <span class="keyword">function</span>() {
+				<span class="keyword">if</span> (resize) {
+					self.ctx.drawImage(<span class="keyword">this</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height, <span class="number">0</span>, <span class="number">0</span>, self.width, self.height);
+					self.tmpCtx.drawImage(<span class="keyword">this</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height, <span class="number">0</span>, <span class="number">0</span>, self.width, self.height);
+				} <span class="keyword">else</span> {
+					self.ctx.drawImage(<span class="keyword">this</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height);
+					self.tmpCtx.drawImage(<span class="keyword">this</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height);
 				}
 				cb.call(self);
 			};
@@ -367,9 +365,9 @@ and we need to copy the data maunally</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		restore:<span class="keyword">function</span>(){
-			<span class="keyword">this</span>.ctx.clearRect(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
-			<span class="keyword">this</span>.ctx.drawImage(<span class="keyword">this</span>.tmpCtx.canvas,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+            <div class="content"><div class='highlight'><pre>		restore: <span class="keyword">function</span>() {
+			<span class="keyword">this</span>.ctx.clearRect(<span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height);
+			<span class="keyword">this</span>.ctx.drawImage(<span class="keyword">this</span>.tmpCtx.canvas, <span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height);
 			<span class="keyword">return</span> <span class="keyword">this</span>;
 		},</pre></div></div>
             
@@ -391,9 +389,9 @@ and we need to copy the data maunally</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		save:<span class="keyword">function</span>(){
-			<span class="keyword">this</span>.tmpCtx.clearRect(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
-			<span class="keyword">this</span>.tmpCtx.drawImage(<span class="keyword">this</span>.ctx.canvas,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+            <div class="content"><div class='highlight'><pre>		save: <span class="keyword">function</span>() {
+			<span class="keyword">this</span>.tmpCtx.clearRect(<span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height);
+			<span class="keyword">this</span>.tmpCtx.drawImage(<span class="keyword">this</span>.ctx.canvas, <span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height);
 			<span class="keyword">return</span> <span class="keyword">this</span>;
 		},</pre></div></div>
             
@@ -415,7 +413,7 @@ and we need to copy the data maunally</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		toDataURL:<span class="keyword">function</span>(){
+            <div class="content"><div class='highlight'><pre>		toDataURL: <span class="keyword">function</span>() {
 			<span class="keyword">return</span> <span class="keyword">this</span>.ctx.canvas.toDataURL(<span class="string">'image/png'</span>);
 		},</pre></div></div>
             
@@ -440,7 +438,7 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		process:<span class="keyword">function</span>(func){</pre></div></div>
+            <div class="content"><div class='highlight'><pre>		process: <span class="keyword">function</span>(func) {</pre></div></div>
             
         </li>
         
@@ -455,7 +453,7 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> pix = <span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> pix = <span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height);</pre></div></div>
             
         </li>
         
@@ -470,15 +468,18 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">for</span>(<span class="keyword">var</span> x = <span class="number">0</span>; x &lt; <span class="keyword">this</span>.width; x++){
-				<span class="keyword">for</span>(<span class="keyword">var</span> y = <span class="number">0</span>; y &lt; <span class="keyword">this</span>.height; y++){
-					<span class="keyword">var</span> i = (y*<span class="keyword">this</span>.width+x)*<span class="number">4</span>;
-					<span class="keyword">var</span> r = pix.data[i], g = pix.data[i+<span class="number">1</span>], b = pix.data[i+<span class="number">2</span>], a = pix.data[i+<span class="number">3</span>];
-					<span class="keyword">var</span> ret = func(r,g,b,a,x,y);
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">for</span> (<span class="keyword">var</span> x = <span class="number">0</span>; x &lt; <span class="keyword">this</span>.width; x++) {
+				<span class="keyword">for</span> (<span class="keyword">var</span> y = <span class="number">0</span>; y &lt; <span class="keyword">this</span>.height; y++) {
+					<span class="keyword">var</span> i = (y * <span class="keyword">this</span>.width + x) * <span class="number">4</span>;
+					<span class="keyword">var</span> r = pix.data[i],
+						g = pix.data[i + <span class="number">1</span>],
+						b = pix.data[i + <span class="number">2</span>],
+						a = pix.data[i + <span class="number">3</span>];
+					<span class="keyword">var</span> ret = func(r, g, b, a, x, y);
 					pix.data[i] = ret[<span class="number">0</span>];
-					pix.data[i+<span class="number">1</span>] = ret[<span class="number">1</span>];
-					pix.data[i+<span class="number">2</span>] = ret[<span class="number">2</span>];
-					pix.data[i+<span class="number">3</span>] = ret[<span class="number">3</span>];
+					pix.data[i + <span class="number">1</span>] = ret[<span class="number">1</span>];
+					pix.data[i + <span class="number">2</span>] = ret[<span class="number">2</span>];
+					pix.data[i + <span class="number">3</span>] = ret[<span class="number">3</span>];
 				}
 			}</pre></div></div>
             
@@ -495,8 +496,8 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">this</span>.ctx.clearRect(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
-			<span class="keyword">this</span>.ctx.putImageData(pix,<span class="number">0</span>,<span class="number">0</span>);
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">this</span>.ctx.clearRect(<span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height);
+			<span class="keyword">this</span>.ctx.putImageData(pix, <span class="number">0</span>, <span class="number">0</span>);
 			<span class="keyword">return</span> <span class="keyword">this</span>;
 		},</pre></div></div>
             
@@ -518,7 +519,7 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		getContext:<span class="keyword">function</span>(){
+            <div class="content"><div class='highlight'><pre>		getContext: <span class="keyword">function</span>() {
 			<span class="keyword">return</span> <span class="keyword">this</span>.ctx;
 		},</pre></div></div>
             
@@ -542,8 +543,8 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		luminance:<span class="keyword">function</span>(r,g,b){
-			<span class="keyword">return</span> <span class="number">0.2126</span>*r + <span class="number">0.7152</span>*g + <span class="number">0.0722</span>*b;
+            <div class="content"><div class='highlight'><pre>		luminance: <span class="keyword">function</span>(r, g, b) {
+			<span class="keyword">return</span> <span class="number">0.2126</span> * r + <span class="number">0.7152</span> * g + <span class="number">0.0722</span> * b;
 		},</pre></div></div>
             
         </li>
@@ -565,8 +566,8 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		createImageData:<span class="keyword">function</span>(w,h){
-			<span class="keyword">return</span> <span class="keyword">this</span>.tmpCtx.createImageData(w,h);
+            <div class="content"><div class='highlight'><pre>		createImageData: <span class="keyword">function</span>(w, h) {
+			<span class="keyword">return</span> <span class="keyword">this</span>.tmpCtx.createImageData(w, h);
 		},</pre></div></div>
             
         </li>
@@ -589,39 +590,38 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		toHSL:<span class="keyword">function</span>(r,g,b){
+            <div class="content"><div class='highlight'><pre>		toHSL: <span class="keyword">function</span>(r, g, b) {
 			r /= <span class="number">255</span>;
 			g /= <span class="number">255</span>;
 			b /= <span class="number">255</span>;
-			<span class="keyword">var</span> max = m.max(r,g,b);
-			<span class="keyword">var</span> min = m.min(r,g,b);
-			<span class="keyword">var</span> h, s, l = (max+min)/<span class="number">2</span>;
-			
-			<span class="keyword">if</span>(max === min){
+			<span class="keyword">var</span> max = m.max(r, g, b);
+			<span class="keyword">var</span> min = m.min(r, g, b);
+			<span class="keyword">var</span> h, s, l = (max + min) / <span class="number">2</span>;
+
+			<span class="keyword">if</span> (max === min) {
 				h = s = <span class="number">0</span>;
-			}
-			<span class="keyword">else</span> {
+			} <span class="keyword">else</span> {
 				<span class="keyword">var</span> d = max - min;
 				s = l &gt; <span class="number">0.5</span> ? d / (<span class="number">2</span> - max - min) : d / (max + min);
-				<span class="keyword">switch</span>(max){
+				<span class="keyword">switch</span> (max) {
 					<span class="keyword">case</span> r:
-					h = (g - b) / d + (g &lt; b ? <span class="number">6</span> : <span class="number">0</span>);
-					<span class="keyword">break</span>;
-					
+						h = (g - b) / d + (g &lt; b ? <span class="number">6</span> : <span class="number">0</span>);
+						<span class="keyword">break</span>;
+
 					<span class="keyword">case</span> g:
-					h = (b - r) / d + <span class="number">2</span>;
-					<span class="keyword">break</span>;
-					
+						h = (b - r) / d + <span class="number">2</span>;
+						<span class="keyword">break</span>;
+
 					<span class="keyword">case</span> b:
-					h = (r - g) / d + <span class="number">4</span>;
-					<span class="keyword">break</span>;
+						h = (r - g) / d + <span class="number">4</span>;
+						<span class="keyword">break</span>;
 				}
 			}
 			h /= <span class="number">6</span>;
 			<span class="keyword">return</span> {
-				h:h,
-				s:s,
-				l:l
+				h: h,
+				s: s,
+				l: l
 			};
 		},</pre></div></div>
             
@@ -645,33 +645,30 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		toRGB:<span class="keyword">function</span>(h,s,l){
+            <div class="content"><div class='highlight'><pre>		toRGB: <span class="keyword">function</span>(h, s, l) {
 			<span class="keyword">var</span> r, g, b;
-			<span class="keyword">if</span>(s == <span class="number">0</span>)
-			{
+			<span class="keyword">if</span> (s == <span class="number">0</span>) {
 				r = g = b = l; <span class="comment">//achromatic</span>
-			}
-			<span class="keyword">else</span>
-			{
-				<span class="function"><span class="keyword">function</span> <span class="title">hue2rgb</span><span class="params">(p, q, t)</span>{</span>
-					<span class="keyword">if</span>(t &lt; <span class="number">0</span>) t += <span class="number">1</span>;
-					<span class="keyword">if</span>(t &gt; <span class="number">1</span>) t -= <span class="number">1</span>;
-					<span class="keyword">if</span>(t &lt; <span class="number">1</span>/<span class="number">6</span>) <span class="keyword">return</span> p + (q - p) * <span class="number">6</span> * t;
-					<span class="keyword">if</span>(t &lt; <span class="number">1</span>/<span class="number">2</span>) <span class="keyword">return</span> q;
-					<span class="keyword">if</span>(t &lt; <span class="number">2</span>/<span class="number">3</span>) <span class="keyword">return</span> p + (q - p) * (<span class="number">2</span>/<span class="number">3</span> - t) * <span class="number">6</span>;
+			} <span class="keyword">else</span> {
+				<span class="function"><span class="keyword">function</span> <span class="title">hue2rgb</span><span class="params">(p, q, t)</span> {</span>
+					<span class="keyword">if</span> (t &lt; <span class="number">0</span>) t += <span class="number">1</span>;
+					<span class="keyword">if</span> (t &gt; <span class="number">1</span>) t -= <span class="number">1</span>;
+					<span class="keyword">if</span> (t &lt; <span class="number">1</span> / <span class="number">6</span>) <span class="keyword">return</span> p + (q - p) * <span class="number">6</span> * t;
+					<span class="keyword">if</span> (t &lt; <span class="number">1</span> / <span class="number">2</span>) <span class="keyword">return</span> q;
+					<span class="keyword">if</span> (t &lt; <span class="number">2</span> / <span class="number">3</span>) <span class="keyword">return</span> p + (q - p) * (<span class="number">2</span> / <span class="number">3</span> - t) * <span class="number">6</span>;
 					<span class="keyword">return</span> p;
 				}
-				
+
 				<span class="keyword">var</span> q = l &lt; <span class="number">0.5</span> ? l * (<span class="number">1</span> + s) : l + s - l * s;
 				<span class="keyword">var</span> p = <span class="number">2</span> * l - q;
-				r = hue2rgb(p, q, h + <span class="number">1</span>/<span class="number">3</span>);
+				r = hue2rgb(p, q, h + <span class="number">1</span> / <span class="number">3</span>);
 				g = hue2rgb(p, q, h);
-				b = hue2rgb(p, q, h - <span class="number">1</span>/<span class="number">3</span>);
+				b = hue2rgb(p, q, h - <span class="number">1</span> / <span class="number">3</span>);
 			}
 			<span class="keyword">return</span> {
-				r:r*<span class="number">255</span>,
-				g:g*<span class="number">255</span>,
-				b:b*<span class="number">255</span>
+				r: r * <span class="number">255</span>,
+				g: g * <span class="number">255</span>,
+				b: b * <span class="number">255</span>
 			};
 		},</pre></div></div>
             
@@ -693,34 +690,31 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		colorTempToRGB:<span class="keyword">function</span>(temp){
+            <div class="content"><div class='highlight'><pre>		colorTempToRGB: <span class="keyword">function</span>(temp) {
 			temp /= <span class="number">100</span>;
 			<span class="keyword">var</span> r, g, b;
-            
-			<span class="keyword">if</span>(temp &lt;= <span class="number">66</span>){
+
+			<span class="keyword">if</span> (temp &lt;= <span class="number">66</span>) {
 				r = <span class="number">255</span>;
-				g = m.min(m.max(<span class="number">99.4708025861</span> * m.log(temp) - <span class="number">161.1195681661</span>,<span class="number">0</span>),<span class="number">255</span>);
+				g = m.min(m.max(<span class="number">99.4708025861</span> * m.log(temp) - <span class="number">161.1195681661</span>, <span class="number">0</span>), <span class="number">255</span>);
+			} <span class="keyword">else</span> {
+				r = m.min(m.max(<span class="number">329.698727446</span> * m.pow(temp - <span class="number">60</span>, -<span class="number">0.1332047592</span>), <span class="number">0</span>), <span class="number">255</span>);
+				g = m.min(m.max(<span class="number">288.1221695283</span> * m.pow(temp - <span class="number">60</span>, -<span class="number">0.0755148492</span>), <span class="number">0</span>), <span class="number">255</span>);
 			}
-			<span class="keyword">else</span> {
-				r = m.min(m.max(<span class="number">329.698727446</span> * m.pow(temp-<span class="number">60</span>,-<span class="number">0.1332047592</span>),<span class="number">0</span>),<span class="number">255</span>);
-				g = m.min(m.max(<span class="number">288.1221695283</span> * m.pow(temp-<span class="number">60</span>,-<span class="number">0.0755148492</span>),<span class="number">0</span>),<span class="number">255</span>);
-			}
-			
-			<span class="keyword">if</span>(temp &gt;= <span class="number">66</span>){
+
+			<span class="keyword">if</span> (temp &gt;= <span class="number">66</span>) {
 				b = <span class="number">255</span>;
-			}
-			<span class="keyword">else</span> <span class="keyword">if</span>(temp &lt;= <span class="number">19</span>){
+			} <span class="keyword">else</span> <span class="keyword">if</span> (temp &lt;= <span class="number">19</span>) {
 				b = <span class="number">0</span>;
-			}
-			<span class="keyword">else</span> {
+			} <span class="keyword">else</span> {
 				b = temp - <span class="number">10</span>;
-				b = m.min(m.max(<span class="number">138.5177312231</span> * m.log(b) - <span class="number">305.0447927307</span>,<span class="number">0</span>),<span class="number">255</span>);
+				b = m.min(m.max(<span class="number">138.5177312231</span> * m.log(b) - <span class="number">305.0447927307</span>, <span class="number">0</span>), <span class="number">255</span>);
 			}
-			
+
 			<span class="keyword">return</span> {
-				r:r,
-				g:g,
-				b:b
+				r: r,
+				g: g,
+				b: b
 			}
 		},</pre></div></div>
             
@@ -743,11 +737,12 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		equalizeHistogram:<span class="keyword">function</span>(src,dst){
+            <div class="content"><div class='highlight'><pre>		equalizeHistogram: <span class="keyword">function</span>(src, dst) {
 			<span class="keyword">var</span> sLen = src.length;
-			<span class="keyword">if</span>(!dst) dst = src;
-			<span class="keyword">var</span> hist = <span class="keyword">new</span> Float32Array(<span class="number">256</span>), sum = <span class="number">0</span>;
-			<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; sLen; ++i){
+			<span class="keyword">if</span> (!dst) dst = src;
+			<span class="keyword">var</span> hist = <span class="keyword">new</span> Float32Array(<span class="number">256</span>),
+				sum = <span class="number">0</span>;
+			<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; sLen; ++i) {
 				++hist[~~src[i]];
 				++sum;
 			}</pre></div></div>
@@ -766,7 +761,7 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
             </div>
             
             <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> prev = hist[<span class="number">0</span>];
-			<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">1</span>; i &lt; <span class="number">256</span>; ++i){
+			<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt; <span class="number">256</span>; ++i) {
 				prev = hist[i] += prev;
 			}</pre></div></div>
             
@@ -784,7 +779,7 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
             </div>
             
             <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> norm = <span class="number">255</span> / sum;
-			<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; sLen; ++i) {
+			<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; sLen; ++i) {
 				dst[i] = hist[~~src[i]] * norm;
 			}
 			<span class="keyword">return</span> dst;
@@ -799,27 +794,20 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
-              <h1>Class Method: toWorker</h1>
-<p>Sends graphics commands to Web Worker
-<em> This is only for internal use only </em></p>
+              <h1>Class Method: smoothStep</h1>
+<p>Implements cubic Hermite interpolation after doing a clamp.</p>
 <h2>Options</h2>
 <ul>
-<li><code>param</code> : The parameters to pass</li>
+<li><code>x</code> : the value to smooth, must be between <code>min</code> and <code>max</code></li>
+<li><code>min</code> : the minimum value</li>
+<li><code>max</code> : the maximum value</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		_toWorker:<span class="keyword">function</span>(params){
-			<span class="keyword">if</span>(<span class="keyword">this</span>.worker){
-				extend(params,{
-					data:<span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height).data
-				});
-				<span class="keyword">this</span>.worker.postMessage(params);
-				<span class="keyword">return</span> <span class="keyword">this</span>;
-			}
-			<span class="keyword">else</span> {
-				assert(<span class="literal">false</span>, <span class="string">'No web worker support!'</span>);
-			}
+            <div class="content"><div class='highlight'><pre>		smoothStep: <span class="keyword">function</span>(x, min, max) {
+			<span class="keyword">var</span> t = m.min(<span class="number">1</span>, m.max((x - min) / (max - min), <span class="number">0</span>));
+			<span class="keyword">return</span> <span class="number">3</span> * t * t - <span class="number">2</span> * t * t * t;
 		},</pre></div></div>
             
         </li>
@@ -831,6 +819,37 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
+              <h1>Class Method: toWorker</h1>
+<p>Sends graphics commands to Web Worker
+<em> This is only for internal use only </em></p>
+<h2>Options</h2>
+<ul>
+<li><code>param</code> : The parameters to pass</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		_toWorker: <span class="keyword">function</span>(params) {
+			<span class="keyword">if</span> (<span class="keyword">this</span>.worker) {
+				extend(params, {
+					data: <span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height).data
+				});
+				<span class="keyword">this</span>.worker.postMessage(params);
+				<span class="keyword">return</span> <span class="keyword">this</span>;
+			} <span class="keyword">else</span> {
+				assert(<span class="literal">false</span>, <span class="string">'No web worker support!'</span>);
+			}
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
               <h1>Class Method: queue</h1>
 <p>Queue the next effect operation to be called
 <em> This is only useful with effects handled with Web Workers, currently only convolution effects </em></p>
@@ -841,13 +860,12 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		queue:<span class="keyword">function</span>(func){
-			<span class="keyword">if</span>(!<span class="keyword">this</span>.worker){
-				<span class="keyword">var</span> pix = <span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+            <div class="content"><div class='highlight'><pre>		queue: <span class="keyword">function</span>(func) {
+			<span class="keyword">if</span> (!<span class="keyword">this</span>.worker) {
+				<span class="keyword">var</span> pix = <span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height);
 				pix.data = func(pix.data);
-				<span class="keyword">this</span>.ctx.putImageData(pix,<span class="number">0</span>,<span class="number">0</span>);
-			}
-			<span class="keyword">else</span> <span class="keyword">this</span>._queue.push(func);
+				<span class="keyword">this</span>.ctx.putImageData(pix, <span class="number">0</span>, <span class="number">0</span>);
+			} <span class="keyword">else</span> <span class="keyword">this</span>._queue.push(func);
 			<span class="keyword">return</span> <span class="keyword">this</span>;
 		}
 	});</pre></div></div>
@@ -855,45 +873,17 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-35">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>colour effects</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	extend(fx.prototype,{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-36">
-            <div class="annotation">
-              
-              <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-36">&#182;</a>
-              </div>
-              <h1>Class Method: greyscale</h1>
-<p>Makes the image Black &amp; White</p>
-<h2>Options</h2>
-<ul>
-<li><code>mix</code> : The blending ratio between the original image &amp; the greyscaled image.<pre><code>    1 is completely B/W &amp; 0 is the original image</code></pre>
-</li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>		greyscale:<span class="keyword">function</span>(mix){
-			mix = mix === <span class="literal">undefined</span> ? <span class="number">1</span> : m.min(m.max(mix,<span class="number">0</span>),<span class="number">1</span>);
-			<span class="keyword">var</span> self = <span class="keyword">this</span>;
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">var</span> l = self.luminance(r,g,b);
-				<span class="keyword">return</span> [l*mix+r*(<span class="number">1</span>-mix),l*mix+g*(<span class="number">1</span>-mix),l*mix+b*(<span class="number">1</span>-mix),a];
-			});
-		},</pre></div></div>
+            <div class="content"><div class='highlight'><pre>	extend(fx.prototype, {</pre></div></div>
             
         </li>
         
@@ -905,20 +895,21 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
                 <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <h1>Class Method: greyscale</h1>
-<p>Makes the image Black &amp; White, only</p>
+<p>Makes the image Black &amp; White</p>
 <h2>Options</h2>
 <ul>
-<li><code>threshold</code> : The threshold rate</li>
+<li><code>mix</code> : The blending ratio between the original image &amp; the greyscaled image.<pre><code>    1 is completely B/W &amp; 0 is the original image</code></pre>
+</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		threshold:<span class="keyword">function</span>(threshold){
-			threshold = threshold || <span class="number">127</span>;
+            <div class="content"><div class='highlight'><pre>		greyscale: <span class="keyword">function</span>(mix) {
+			mix = mix === <span class="literal">undefined</span> ? <span class="number">1</span> : m.min(m.max(mix, <span class="number">0</span>), <span class="number">1</span>);
 			<span class="keyword">var</span> self = <span class="keyword">this</span>;
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">var</span> l = self.luminance(r,g,b) &gt; threshold ? <span class="number">255</span>: <span class="number">0</span>;
-				<span class="keyword">return</span> [l,l,l,a];
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">var</span> l = self.luminance(r, g, b);
+				<span class="keyword">return</span> [l * mix + r * (<span class="number">1</span> - mix), l * mix + g * (<span class="number">1</span> - mix), l * mix + b * (<span class="number">1</span> - mix), a];
 			});
 		},</pre></div></div>
             
@@ -931,19 +922,21 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
-              <h1>Class Method: invert</h1>
-<p>Makes the image has a X-Ray feel.</p>
+              <h1>Class Method: greyscale</h1>
+<p>Makes the image Black &amp; White, only</p>
 <h2>Options</h2>
 <ul>
-<li><code>mix</code> : The blending ratio between the original image &amp; the inverted image.</li>
+<li><code>threshold</code> : The threshold rate</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		invert:<span class="keyword">function</span>(mix){
-			mix = mix === <span class="literal">undefined</span> ? <span class="number">1</span> : m.min(m.max(mix,<span class="number">0</span>),<span class="number">1</span>);
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">return</span> [(<span class="number">255</span>-r)*mix+r*(<span class="number">1</span>-mix),(<span class="number">255</span>-g)*mix+g*(<span class="number">1</span>-mix),(<span class="number">255</span>-b)*mix+b*(<span class="number">1</span>-mix),a];
+            <div class="content"><div class='highlight'><pre>		threshold: <span class="keyword">function</span>(threshold) {
+			threshold = threshold || <span class="number">127</span>;
+			<span class="keyword">var</span> self = <span class="keyword">this</span>;
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">var</span> l = self.luminance(r, g, b) &gt; threshold ? <span class="number">255</span> : <span class="number">0</span>;
+				<span class="keyword">return</span> [l, l, l, a];
 			});
 		},</pre></div></div>
             
@@ -956,22 +949,19 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
-              <h1>Class Method: sepia</h1>
-<p>Gives the image an old yellowish look</p>
+              <h1>Class Method: invert</h1>
+<p>Makes the image has a X-Ray feel.</p>
 <h2>Options</h2>
 <ul>
-<li><code>mix</code> : The blending ratio between the original image &amp; the sepia&#39;ed image.</li>
+<li><code>mix</code> : The blending ratio between the original image &amp; the inverted image.</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		sepia:<span class="keyword">function</span>(mix){
-			mix = mix === <span class="literal">undefined</span> ? <span class="number">1</span> : m.min(m.max(mix,<span class="number">0</span>),<span class="number">1</span>);
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">var</span> nr = (<span class="number">0.393</span> * r + <span class="number">0.769</span> * g + <span class="number">0.189</span> * b) * mix + r * (<span class="number">1</span> - mix);
-				<span class="keyword">var</span> ng = (<span class="number">0.349</span> * r + <span class="number">0.686</span> * g + <span class="number">0.168</span> * b) * mix + g * (<span class="number">1</span> - mix);
-				<span class="keyword">var</span> nb = (<span class="number">0.272</span> * r + <span class="number">0.534</span> * g + <span class="number">0.131</span> * b) * mix + b * (<span class="number">1</span> - mix);
-				<span class="keyword">return</span> [nr,ng,nb,a];
+            <div class="content"><div class='highlight'><pre>		invert: <span class="keyword">function</span>(mix) {
+			mix = mix === <span class="literal">undefined</span> ? <span class="number">1</span> : m.min(m.max(mix, <span class="number">0</span>), <span class="number">1</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">return</span> [(<span class="number">255</span> - r) * mix + r * (<span class="number">1</span> - mix), (<span class="number">255</span> - g) * mix + g * (<span class="number">1</span> - mix), (<span class="number">255</span> - b) * mix + b * (<span class="number">1</span> - mix), a];
 			});
 		},</pre></div></div>
             
@@ -984,6 +974,34 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
+              <h1>Class Method: sepia</h1>
+<p>Gives the image an old yellowish look</p>
+<h2>Options</h2>
+<ul>
+<li><code>mix</code> : The blending ratio between the original image &amp; the sepia&#39;ed image.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		sepia: <span class="keyword">function</span>(mix) {
+			mix = mix === <span class="literal">undefined</span> ? <span class="number">1</span> : m.min(m.max(mix, <span class="number">0</span>), <span class="number">1</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">var</span> nr = (<span class="number">0.393</span> * r + <span class="number">0.769</span> * g + <span class="number">0.189</span> * b) * mix + r * (<span class="number">1</span> - mix);
+				<span class="keyword">var</span> ng = (<span class="number">0.349</span> * r + <span class="number">0.686</span> * g + <span class="number">0.168</span> * b) * mix + g * (<span class="number">1</span> - mix);
+				<span class="keyword">var</span> nb = (<span class="number">0.272</span> * r + <span class="number">0.534</span> * g + <span class="number">0.131</span> * b) * mix + b * (<span class="number">1</span> - mix);
+				<span class="keyword">return</span> [nr, ng, nb, a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
               <h1>Class Method: hdr</h1>
 <p>Simulates High Dynamic Range (HDR) by changing contrast sinsounaously.</p>
 <h2>Options</h2>
@@ -993,18 +1011,17 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		hdr:<span class="keyword">function</span>(){
-			<span class="keyword">var</span> changeContrast = <span class="keyword">function</span>(v){
-				<span class="keyword">if</span>(v &gt; <span class="number">0</span> &amp;&amp; v &lt;= <span class="number">127</span>){
-					v = m.sin(m.PI * (<span class="number">90</span>-v/<span class="number">4</span>) / <span class="number">180</span>) * v;
-				}
-				<span class="keyword">else</span> <span class="keyword">if</span>(v &gt; <span class="number">127</span>){
-					v = m.sin(m.PI * (<span class="number">90</span>-(<span class="number">255</span>-v)/<span class="number">4</span>) / <span class="number">180</span>) * v;
+            <div class="content"><div class='highlight'><pre>		hdr: <span class="keyword">function</span>() {
+			<span class="keyword">var</span> changeContrast = <span class="keyword">function</span>(v) {
+				<span class="keyword">if</span> (v &gt; <span class="number">0</span> &amp;&amp; v &lt;= <span class="number">127</span>) {
+					v = m.sin(m.PI * (<span class="number">90</span> - v / <span class="number">4</span>) / <span class="number">180</span>) * v;
+				} <span class="keyword">else</span> <span class="keyword">if</span> (v &gt; <span class="number">127</span>) {
+					v = m.sin(m.PI * (<span class="number">90</span> - (<span class="number">255</span> - v) / <span class="number">4</span>) / <span class="number">180</span>) * v;
 				}
 				<span class="keyword">return</span> v;
 			};
-			
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
 				<span class="keyword">return</span> [
 					changeContrast(r),
 					changeContrast(g),
@@ -1018,26 +1035,26 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-41">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>Special effects</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	extend(fx.prototype,{</pre></div></div>
+            <div class="content"><div class='highlight'><pre>	extend(fx.prototype, {</pre></div></div>
             
         </li>
         
         
-        <li id="section-42">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <h1>Class Method: noise</h1>
 <p>Generating noise by changing the brightness randomly.</p>
@@ -1049,23 +1066,62 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		noise:<span class="keyword">function</span>(amt,alphanoise){
-			assert(amt &gt;= <span class="number">0</span>,<span class="string">"Noise amount must be a positive number."</span>);
+            <div class="content"><div class='highlight'><pre>		noise: <span class="keyword">function</span>(amt, alphanoise) {
+			assert(amt &gt;= <span class="number">0</span>, <span class="string">"Noise amount must be a positive number."</span>);
 			alphanoise = alphanoise || <span class="literal">false</span>;
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">var</span> noise = -amt/<span class="number">2</span> + m.random() * amt * <span class="number">2</span>;
-				<span class="keyword">return</span> [r+noise,g+noise,b+noise,alphanoise ? a + noise : a];
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">var</span> noise = -amt / <span class="number">2</span> + m.random() * amt * <span class="number">2</span>;
+				<span class="keyword">return</span> [r + noise, g + noise, b + noise, alphanoise ? a + noise : a];
 			});
 		},</pre></div></div>
             
         </li>
         
         
-        <li id="section-43">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <h1>Class Method: smoothNoise</h1>
+<p>Generating noise with smoothing</p>
+<h2>Options</h2>
+<ul>
+<li>same as <code>noise</code></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		smoothNoise: <span class="keyword">function</span>(amt, alphanoise){
+			<span class="keyword">var</span> self = <span class="keyword">this</span>;
+			assert(amt &gt;= <span class="number">0</span>, <span class="string">"Noise amount must be a positive number."</span>);
+			alphanoise = alphanoise || <span class="literal">false</span>;
+			<span class="keyword">var</span> lastRandoms = [<span class="number">0</span>];
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">var</span> thisRandom = m.random();
+				<span class="keyword">var</span> mean = <span class="number">0</span>;
+				lastRandoms.push(thisRandom);
+
+				<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; lastRandoms.length; i++) mean += lastRandoms[i];
+				mean /= lastRandoms.length;
+				mean = self.smoothStep(mean, <span class="number">0</span>, <span class="number">1</span>);
+
+				<span class="keyword">if</span>(lastRandoms.length &gt; <span class="number">10</span> + <span class="number">40</span> * thisRandom) lastRandoms = [mean * <span class="number">0.5</span>];
+
+				<span class="keyword">var</span> noise = -amt / <span class="number">2</span> + mean * amt * <span class="number">2</span>;
+				<span class="keyword">return</span> [r + noise, g + noise, b + noise, alphanoise ? a + noise : a];
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <h1>Class Method: glow</h1>
 <p>Make the image glows.</p>
@@ -1076,17 +1132,17 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		glow:<span class="keyword">function</span>(radius){
+            <div class="content"><div class='highlight'><pre>		glow: <span class="keyword">function</span>(radius) {
 			<span class="keyword">var</span> self = <span class="keyword">this</span>;</pre></div></div>
             
         </li>
         
         
-        <li id="section-44">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>Blur it first</p>
 
@@ -1097,23 +1153,23 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-45">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p>Apply a screen filter with the original image to make the glowing feel</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> <span class="keyword">this</span>.queue(<span class="keyword">function</span>(data){
-				<span class="keyword">var</span> orig = self.ctx.getImageData(<span class="number">0</span>,<span class="number">0</span>,self.width,self.height);
-				<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; data.length; i += <span class="number">4</span>){
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> <span class="keyword">this</span>.queue(<span class="keyword">function</span>(data) {
+				<span class="keyword">var</span> orig = self.ctx.getImageData(<span class="number">0</span>, <span class="number">0</span>, self.width, self.height);
+				<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; data.length; i += <span class="number">4</span>) {
 					data[i] = <span class="number">255</span> - (((<span class="number">255</span> - data[i]) * (<span class="number">255</span> - orig.data[i])) / <span class="number">255</span>);
-					data[i+<span class="number">1</span>] = <span class="number">255</span> - (((<span class="number">255</span> - data[i+<span class="number">1</span>]) * (<span class="number">255</span> - orig.data[i+<span class="number">1</span>])) / <span class="number">255</span>);
-					data[i+<span class="number">2</span>] = <span class="number">255</span> - (((<span class="number">255</span> - data[i+<span class="number">2</span>]) * (<span class="number">255</span> - orig.data[i+<span class="number">2</span>])) / <span class="number">255</span>);
-					data[i+<span class="number">3</span>] = <span class="number">255</span> - (((<span class="number">255</span> - data[i+<span class="number">3</span>]) * (<span class="number">255</span> - orig.data[i+<span class="number">3</span>])) / <span class="number">255</span>);
+					data[i + <span class="number">1</span>] = <span class="number">255</span> - (((<span class="number">255</span> - data[i + <span class="number">1</span>]) * (<span class="number">255</span> - orig.data[i + <span class="number">1</span>])) / <span class="number">255</span>);
+					data[i + <span class="number">2</span>] = <span class="number">255</span> - (((<span class="number">255</span> - data[i + <span class="number">2</span>]) * (<span class="number">255</span> - orig.data[i + <span class="number">2</span>])) / <span class="number">255</span>);
+					data[i + <span class="number">3</span>] = <span class="number">255</span> - (((<span class="number">255</span> - data[i + <span class="number">3</span>]) * (<span class="number">255</span> - orig.data[i + <span class="number">3</span>])) / <span class="number">255</span>);
 				}
 				<span class="keyword">return</span> data;
 			});
@@ -1122,11 +1178,11 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-46">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <h1>Class Method: colorMatrix</h1>
 <p>Apply a 5x5 colour matrix to the image</p>
@@ -1137,24 +1193,24 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		colorMatrix:<span class="keyword">function</span>(matrix){
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
+            <div class="content"><div class='highlight'><pre>		colorMatrix: <span class="keyword">function</span>(matrix) {
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
 				<span class="keyword">var</span> nr = r * matrix[<span class="number">0</span>] + g * matrix[<span class="number">1</span>] + b * matrix[<span class="number">2</span>] + a * matrix[<span class="number">3</span>] + <span class="number">255</span> * matrix[<span class="number">20</span>];
 				<span class="keyword">var</span> ng = r * matrix[<span class="number">5</span>] + g * matrix[<span class="number">6</span>] + b * matrix[<span class="number">7</span>] + a * matrix[<span class="number">8</span>] + <span class="number">255</span> * matrix[<span class="number">21</span>];
 				<span class="keyword">var</span> nb = r * matrix[<span class="number">10</span>] + g * matrix[<span class="number">11</span>] + b * matrix[<span class="number">12</span>] + a * matrix[<span class="number">13</span>] + <span class="number">255</span> * matrix[<span class="number">22</span>];
 				<span class="keyword">var</span> na = r * matrix[<span class="number">15</span>] + g * matrix[<span class="number">16</span>] + b * matrix[<span class="number">17</span>] + a * matrix[<span class="number">18</span>] + <span class="number">255</span> * matrix[<span class="number">23</span>];
-				<span class="keyword">return</span> [nr,ng,nb,na];
+				<span class="keyword">return</span> [nr, ng, nb, na];
 			});
 		},</pre></div></div>
             
         </li>
         
         
-        <li id="section-47">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <h1>Class Method: equalize</h1>
 <p>Equalize the image.</p>
@@ -1165,36 +1221,38 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		equalize:<span class="keyword">function</span>(){</pre></div></div>
+            <div class="content"><div class='highlight'><pre>		equalize: <span class="keyword">function</span>() {</pre></div></div>
             
         </li>
         
         
-        <li id="section-48">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p>Calculate the brightness first</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> self = <span class="keyword">this</span>, table = <span class="keyword">new</span> Uint8ClampedArray(<span class="keyword">this</span>.width*<span class="keyword">this</span>.height), i = <span class="number">0</span>;
-			<span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				table[i] = self.luminance(r,g,b);
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> self = <span class="keyword">this</span>,
+				table = <span class="keyword">new</span> Uint8ClampedArray(<span class="keyword">this</span>.width * <span class="keyword">this</span>.height),
+				i = <span class="number">0</span>;
+			<span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				table[i] = self.luminance(r, g, b);
 				i++;
-				<span class="keyword">return</span> [r,g,b,a];
+				<span class="keyword">return</span> [r, g, b, a];
 			});</pre></div></div>
             
         </li>
         
         
-        <li id="section-49">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p>Then equalize the data</p>
 
@@ -1206,33 +1264,33 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-50">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p>Finally, change the brightness of every pixel</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">var</span> hsl = self.toHSL(r,g,b);
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">var</span> hsl = self.toHSL(r, g, b);
 				hsl.l = table[i] / <span class="number">255</span>;
 				i++;
-				<span class="keyword">var</span> rgb = self.toRGB(hsl.h,hsl.s,hsl.l);
-				<span class="keyword">return</span> [rgb.r,rgb.g,rgb.b,a];
+				<span class="keyword">var</span> rgb = self.toRGB(hsl.h, hsl.s, hsl.l);
+				<span class="keyword">return</span> [rgb.r, rgb.g, rgb.b, a];
 			});
 		},</pre></div></div>
             
         </li>
         
         
-        <li id="section-51">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <h1>Class Method: TV</h1>
 <p>Adds old TV feel to the image.</p>
@@ -1243,23 +1301,23 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		tv:<span class="keyword">function</span>(){</pre></div></div>
+            <div class="content"><div class='highlight'><pre>		tv: <span class="keyword">function</span>() {</pre></div></div>
             
         </li>
         
         
-        <li id="section-52">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p>Add same scanlines to the image
 TODO: Make the scanline level adjustable</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a,x,y){
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a, x, y) {
 				<span class="keyword">var</span> br = m.sin(y) * <span class="number">80</span>;
 				<span class="keyword">return</span> [
 					r - br,
@@ -1272,44 +1330,44 @@ TODO: Make the scanline level adjustable</p>
         </li>
         
         
-        <li id="section-53">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p>Generate some noise on the image
 TODO: Improve the noise generation algorithm</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> <span class="keyword">this</span>.noise(<span class="number">50</span>);
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> <span class="keyword">this</span>.smoothNoise(<span class="number">50</span>);
 		}
 	});</pre></div></div>
             
         </li>
         
         
-        <li id="section-54">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p>Here are the adjustments</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	extend(fx.prototype,{</pre></div></div>
+            <div class="content"><div class='highlight'><pre>	extend(fx.prototype, {</pre></div></div>
             
         </li>
         
         
-        <li id="section-55">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <h1>Class Method: hue</h1>
 <p>Adjust the hue or change the hue of an image.</p>
@@ -1321,81 +1379,19 @@ TODO: Improve the noise generation algorithm</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		hue:<span class="keyword">function</span>(hue,colorize){
-			assert(hue !== <span class="literal">undefined</span>,<span class="string">"Hue must be specified."</span>)
+            <div class="content"><div class='highlight'><pre>		hue: <span class="keyword">function</span>(hue, colorize) {
+			assert(hue !== <span class="literal">undefined</span>, <span class="string">"Hue must be specified."</span>)
 			<span class="keyword">var</span> self = <span class="keyword">this</span>;
 			colorize = colorize || <span class="literal">false</span>;
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">var</span> hsl = self.toHSL(r,g,b);
-				<span class="keyword">if</span>(colorize){
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">var</span> hsl = self.toHSL(r, g, b);
+				<span class="keyword">if</span> (colorize) {
 					hsl.h = hue / <span class="number">360</span>;
-				}
-				<span class="keyword">else</span> {
+				} <span class="keyword">else</span> {
 					hsl.h = hsl.h + hue / <span class="number">360</span>;
 				}
-				<span class="keyword">var</span> rgb = self.toRGB(hsl.h,hsl.s,hsl.l);
-				<span class="keyword">return</span> [rgb.r,rgb.g,rgb.b,a];
-			});
-		},</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-56">
-            <div class="annotation">
-              
-              <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-56">&#182;</a>
-              </div>
-              <h1>Class Method: saturation</h1>
-<p>Adjust the saturation or change the saturation of an image.</p>
-<h2>Options</h2>
-<ul>
-<li><code>sat</code> : The saturation adjustment</li>
-<li><code>colorize</code> : Whether to chang the saturation or to adjust the hue</li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>		saturation:<span class="keyword">function</span>(sat,colorize){
-			assert(sat !== <span class="literal">undefined</span>,<span class="string">"Saturation must be specified."</span>)
-			<span class="keyword">var</span> self = <span class="keyword">this</span>;
-			colorize = colorize || <span class="literal">false</span>;
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">var</span> hsl = self.toHSL(r,g,b);
-				<span class="keyword">if</span>(colorize){
-					hsl.s = m.min(m.max(sat,<span class="number">0</span>),<span class="number">1</span>);
-				}
-				<span class="keyword">else</span> {
-					hsl.s = m.min(m.max(hsl.s + sat,<span class="number">0</span>),<span class="number">1</span>);
-				}
-				<span class="keyword">var</span> rgb = self.toRGB(hsl.h,hsl.s,hsl.l);
-				<span class="keyword">return</span> [rgb.r,rgb.g,rgb.b,a];
-			});
-		},</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-57">
-            <div class="annotation">
-              
-              <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-57">&#182;</a>
-              </div>
-              <h1>Class Method: brightness</h1>
-<p>Adjust the brightness of an image.</p>
-<h2>Options</h2>
-<ul>
-<li><code>brightness</code> : The brightness adjustment</li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>		brightness:<span class="keyword">function</span>(brightness){
-			assert(brightness !== <span class="literal">undefined</span>,<span class="string">"Brightness must be set"</span>);
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">return</span> [r+brightness,g+brightness,b+brightness,a];
+				<span class="keyword">var</span> rgb = self.toRGB(hsl.h, hsl.s, hsl.l);
+				<span class="keyword">return</span> [rgb.r, rgb.g, rgb.b, a];
 			});
 		},</pre></div></div>
             
@@ -1408,21 +1404,29 @@ TODO: Improve the noise generation algorithm</p>
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
-              <h1>Class Method: contrast</h1>
-<p>Adjust the contrast of an image.</p>
+              <h1>Class Method: saturation</h1>
+<p>Adjust the saturation or change the saturation of an image.</p>
 <h2>Options</h2>
 <ul>
-<li><code>level</code> : The contrast adjustment</li>
+<li><code>sat</code> : The saturation adjustment</li>
+<li><code>colorize</code> : Whether to chang the saturation or to adjust the hue</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		contrast:<span class="keyword">function</span>(level){
-			assert(level !== <span class="literal">undefined</span>,<span class="string">"Contrast level must be set."</span>);
+            <div class="content"><div class='highlight'><pre>		saturation: <span class="keyword">function</span>(sat, colorize) {
+			assert(sat !== <span class="literal">undefined</span>, <span class="string">"Saturation must be specified."</span>)
 			<span class="keyword">var</span> self = <span class="keyword">this</span>;
-			level = m.pow((level+<span class="number">100</span>)/<span class="number">100</span>,<span class="number">2</span>);
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">return</span> [((r/<span class="number">255</span>-<span class="number">0.5</span>)*level+<span class="number">0.5</span>)*<span class="number">255</span>,((g/<span class="number">255</span>-<span class="number">0.5</span>)*level+<span class="number">0.5</span>)*<span class="number">255</span>,((b/<span class="number">255</span>-<span class="number">0.5</span>)*level+<span class="number">0.5</span>)*<span class="number">255</span>,a];
+			colorize = colorize || <span class="literal">false</span>;
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">var</span> hsl = self.toHSL(r, g, b);
+				<span class="keyword">if</span> (colorize) {
+					hsl.s = m.min(m.max(sat, <span class="number">0</span>), <span class="number">1</span>);
+				} <span class="keyword">else</span> {
+					hsl.s = m.min(m.max(hsl.s + sat, <span class="number">0</span>), <span class="number">1</span>);
+				}
+				<span class="keyword">var</span> rgb = self.toRGB(hsl.h, hsl.s, hsl.l);
+				<span class="keyword">return</span> [rgb.r, rgb.g, rgb.b, a];
 			});
 		},</pre></div></div>
             
@@ -1435,19 +1439,19 @@ TODO: Improve the noise generation algorithm</p>
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
-              <h1>Class Method: gamma</h1>
-<p>Adjust the gamma of an image.</p>
+              <h1>Class Method: brightness</h1>
+<p>Adjust the brightness of an image.</p>
 <h2>Options</h2>
 <ul>
-<li><code>gamma</code> : The gamma adjustment</li>
+<li><code>brightness</code> : The brightness adjustment</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		gamma:<span class="keyword">function</span>(gamma){
-			assert(gamma !== <span class="literal">undefined</span>,<span class="string">"Gamma level must be set."</span>);
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">return</span> [r*gamma,g*gamma,b*gamma,a];
+            <div class="content"><div class='highlight'><pre>		brightness: <span class="keyword">function</span>(brightness) {
+			assert(brightness !== <span class="literal">undefined</span>, <span class="string">"Brightness must be set"</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">return</span> [r + brightness, g + brightness, b + brightness, a];
 			});
 		},</pre></div></div>
             
@@ -1460,21 +1464,21 @@ TODO: Improve the noise generation algorithm</p>
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
-              <h1>Class Method: gammaRGB</h1>
-<p>Adjust the gamma of an image on different RGB channels.</p>
+              <h1>Class Method: contrast</h1>
+<p>Adjust the contrast of an image.</p>
 <h2>Options</h2>
 <ul>
-<li><code>lr</code> : The red gamma adjustment</li>
-<li><code>lg</code> : The green gamma adjustment</li>
-<li><code>lb</code> : The blue gamma adjustment</li>
+<li><code>level</code> : The contrast adjustment</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		gammaRGB:<span class="keyword">function</span>(lr,lg,lb){
-			assert(lr !== <span class="literal">undefined</span> &amp;&amp; lg !== <span class="literal">undefined</span> &amp;&amp; lb !== <span class="literal">undefined</span>,<span class="string">"Gamma level must be set."</span>);
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">return</span> [r*lr,g*lg,b*lb,a];
+            <div class="content"><div class='highlight'><pre>		contrast: <span class="keyword">function</span>(level) {
+			assert(level !== <span class="literal">undefined</span>, <span class="string">"Contrast level must be set."</span>);
+			<span class="keyword">var</span> self = <span class="keyword">this</span>;
+			level = m.pow((level + <span class="number">100</span>) / <span class="number">100</span>, <span class="number">2</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">return</span> [((r / <span class="number">255</span> - <span class="number">0.5</span>) * level + <span class="number">0.5</span>) * <span class="number">255</span>, ((g / <span class="number">255</span> - <span class="number">0.5</span>) * level + <span class="number">0.5</span>) * <span class="number">255</span>, ((b / <span class="number">255</span> - <span class="number">0.5</span>) * level + <span class="number">0.5</span>) * <span class="number">255</span>, a];
 			});
 		},</pre></div></div>
             
@@ -1487,30 +1491,19 @@ TODO: Improve the noise generation algorithm</p>
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
-              <h1>Class Method: vibrance</h1>
-<p>Adjust the vibrance of an image.</p>
+              <h1>Class Method: gamma</h1>
+<p>Adjust the gamma of an image.</p>
 <h2>Options</h2>
 <ul>
-<li><code>level</code> : The vibrance adjustment</li>
+<li><code>gamma</code> : The gamma adjustment</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		vibrance:<span class="keyword">function</span>(level){
-			assert(level !== <span class="literal">undefined</span>,<span class="string">"Vibrance level must be set."</span>);
-			level *= -<span class="number">1</span>;
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">var</span> max = m.max(r,g,b), avg = (r+g+b)/<span class="number">3</span>, amt = ((m.abs(max - avg) * <span class="number">2</span> / <span class="number">255</span>) * level) / <span class="number">100</span>;
-				<span class="keyword">if</span>(r !== max){
-					r += (max - r) * amt;
-				}
-				<span class="keyword">if</span>(g !== max){
-					g += (max - g) * amt;
-				}
-				<span class="keyword">if</span>(b !== max){
-					b += (max - b) * amt;
-				}
-				<span class="keyword">return</span> [r,g,b,a];
+            <div class="content"><div class='highlight'><pre>		gamma: <span class="keyword">function</span>(gamma) {
+			assert(gamma !== <span class="literal">undefined</span>, <span class="string">"Gamma level must be set."</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">return</span> [r * gamma, g * gamma, b * gamma, a];
 			});
 		},</pre></div></div>
             
@@ -1523,25 +1516,23 @@ TODO: Improve the noise generation algorithm</p>
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
-              <h1>Class Method: whiteBalance</h1>
-<p>Adjust the white balance of an image.</p>
+              <h1>Class Method: gammaRGB</h1>
+<p>Adjust the gamma of an image on different RGB channels.</p>
 <h2>Options</h2>
 <ul>
-<li><code>level</code> : The colour temperature</li>
+<li><code>lr</code> : The red gamma adjustment</li>
+<li><code>lg</code> : The green gamma adjustment</li>
+<li><code>lb</code> : The blue gamma adjustment</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		whiteBalance:<span class="keyword">function</span>(temp){
-			<span class="keyword">var</span> color = <span class="keyword">this</span>.colorTempToRGB(temp);
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r,g,b,a){
-				<span class="keyword">var</span> nr = r * (<span class="number">255</span> / color.r);
-				<span class="keyword">var</span> ng = g * (<span class="number">255</span> / color.g);
-				<span class="keyword">var</span> nb = b * (<span class="number">255</span> / color.b);
-				<span class="keyword">return</span> [nr,ng,nb,a];
+            <div class="content"><div class='highlight'><pre>		gammaRGB: <span class="keyword">function</span>(lr, lg, lb) {
+			assert(lr !== <span class="literal">undefined</span> &amp;&amp; lg !== <span class="literal">undefined</span> &amp;&amp; lb !== <span class="literal">undefined</span>, <span class="string">"Gamma level must be set."</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">return</span> [r * lr, g * lg, b * lb, a];
 			});
-		}
-	});</pre></div></div>
+		},</pre></div></div>
             
         </li>
         
@@ -1549,14 +1540,37 @@ TODO: Improve the noise generation algorithm</p>
         <li id="section-63">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
-              <p>Convolution effects</p>
+              <h1>Class Method: vibrance</h1>
+<p>Adjust the vibrance of an image.</p>
+<h2>Options</h2>
+<ul>
+<li><code>level</code> : The vibrance adjustment</li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	extend(fx.prototype,{</pre></div></div>
+            <div class="content"><div class='highlight'><pre>		vibrance: <span class="keyword">function</span>(level) {
+			assert(level !== <span class="literal">undefined</span>, <span class="string">"Vibrance level must be set."</span>);
+			level *= -<span class="number">1</span>;
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">var</span> max = m.max(r, g, b),
+					avg = (r + g + b) / <span class="number">3</span>,
+					amt = ((m.abs(max - avg) * <span class="number">2</span> / <span class="number">255</span>) * level) / <span class="number">100</span>;
+				<span class="keyword">if</span> (r !== max) {
+					r += (max - r) * amt;
+				}
+				<span class="keyword">if</span> (g !== max) {
+					g += (max - g) * amt;
+				}
+				<span class="keyword">if</span> (b !== max) {
+					b += (max - b) * amt;
+				}
+				<span class="keyword">return</span> [r, g, b, a];
+			});
+		},</pre></div></div>
             
         </li>
         
@@ -1566,6 +1580,50 @@ TODO: Improve the noise generation algorithm</p>
               
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-64">&#182;</a>
+              </div>
+              <h1>Class Method: whiteBalance</h1>
+<p>Adjust the white balance of an image.</p>
+<h2>Options</h2>
+<ul>
+<li><code>level</code> : The colour temperature</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		whiteBalance: <span class="keyword">function</span>(temp) {
+			<span class="keyword">var</span> color = <span class="keyword">this</span>.colorTempToRGB(temp);
+			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
+				<span class="keyword">var</span> nr = r * (<span class="number">255</span> / color.r);
+				<span class="keyword">var</span> ng = g * (<span class="number">255</span> / color.g);
+				<span class="keyword">var</span> nb = b * (<span class="number">255</span> / color.b);
+				<span class="keyword">return</span> [nr, ng, nb, a];
+			});
+		}
+	});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-65">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-65">&#182;</a>
+              </div>
+              <p>Convolution effects</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	extend(fx.prototype, {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-66">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <h1>Class Method: convolute</h1>
 <p>Apply a convolution matrix of any size to the image</p>
@@ -1578,23 +1636,22 @@ TODO: Improve the noise generation algorithm</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		convolute:<span class="keyword">function</span>(weights, offset, opaque){
-			assert(weights !== <span class="literal">undefined</span>,<span class="string">"Convolution matrix must be set."</span>);
-			assert(offset !== <span class="literal">undefined</span>,<span class="string">"Offset must be set."</span>);
+            <div class="content"><div class='highlight'><pre>		convolute: <span class="keyword">function</span>(weights, offset, opaque) {
+			assert(weights !== <span class="literal">undefined</span>, <span class="string">"Convolution matrix must be set."</span>);
+			assert(offset !== <span class="literal">undefined</span>, <span class="string">"Offset must be set."</span>);
 			opaque = opaque || <span class="literal">true</span>;
 
-			<span class="keyword">if</span>(<span class="keyword">this</span>.worker){
+			<span class="keyword">if</span> (<span class="keyword">this</span>.worker) {
 				<span class="keyword">this</span>._toWorker({
-					type:<span class="string">'convolute'</span>,
-					matrix:weights,
-					offset:offset,
-					opaque:opaque
+					type: <span class="string">'convolute'</span>,
+					matrix: weights,
+					offset: offset,
+					opaque: opaque
 				});
-			}
-			<span class="keyword">else</span> {
-				<span class="keyword">var</span> pixels = <span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
+			} <span class="keyword">else</span> {
+				<span class="keyword">var</span> pixels = <span class="keyword">this</span>.ctx.getImageData(<span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height);
 				<span class="keyword">var</span> side = m.round(m.sqrt(weights.length));
-				<span class="keyword">var</span> halfSide = m.floor(side/<span class="number">2</span>);
+				<span class="keyword">var</span> halfSide = m.floor(side / <span class="number">2</span>);
 				<span class="keyword">var</span> src = pixels.data;
 				<span class="keyword">var</span> sw = pixels.width;
 				<span class="keyword">var</span> sh = pixels.height;</pre></div></div>
@@ -1602,11 +1659,11 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-65">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p>pad output by the convolution matrix</p>
 
@@ -1620,60 +1677,63 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-66">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p>go through the destination image pixels</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>				<span class="keyword">var</span> alphaFac = opaque ? <span class="number">1</span> : <span class="number">0</span>;
-				<span class="keyword">for</span>(<span class="keyword">var</span> y=<span class="number">0</span>; y&lt;h; y++){
-					<span class="keyword">for</span>(<span class="keyword">var</span> x=<span class="number">0</span>; x&lt;w; x++){
+				<span class="keyword">for</span> (<span class="keyword">var</span> y = <span class="number">0</span>; y &lt; h; y++) {
+					<span class="keyword">for</span> (<span class="keyword">var</span> x = <span class="number">0</span>; x &lt; w; x++) {
 						<span class="keyword">var</span> sy = y;
 						<span class="keyword">var</span> sx = x;
-						<span class="keyword">var</span> dstOff = (y*w+x)*<span class="number">4</span>;</pre></div></div>
+						<span class="keyword">var</span> dstOff = (y * w + x) * <span class="number">4</span>;</pre></div></div>
             
         </li>
         
         
-        <li id="section-67">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <p>calculate the weighed sum of the source image pixels that
 fall under the convolution matrix</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>						<span class="keyword">var</span> r=<span class="number">0</span>, g=<span class="number">0</span>, b=<span class="number">0</span>, a=<span class="number">0</span>;
-						<span class="keyword">for</span>(<span class="keyword">var</span> cy=<span class="number">0</span>; cy&lt;side; cy++){
-							<span class="keyword">for</span>(<span class="keyword">var</span> cx=<span class="number">0</span>; cx&lt;side; cx++){
+            <div class="content"><div class='highlight'><pre>						<span class="keyword">var</span> r = <span class="number">0</span>,
+							g = <span class="number">0</span>,
+							b = <span class="number">0</span>,
+							a = <span class="number">0</span>;
+						<span class="keyword">for</span> (<span class="keyword">var</span> cy = <span class="number">0</span>; cy &lt; side; cy++) {
+							<span class="keyword">for</span> (<span class="keyword">var</span> cx = <span class="number">0</span>; cx &lt; side; cx++) {
 								<span class="keyword">var</span> scy = sy + cy - halfSide;
 								<span class="keyword">var</span> scx = sx + cx - halfSide;
-								<span class="keyword">if</span>(scy &gt;= <span class="number">0</span> &amp;&amp; scy &lt; sh &amp;&amp; scx &gt;= <span class="number">0</span> &amp;&amp; scx &lt; sw){
-									<span class="keyword">var</span> srcOff = (scy*sw+scx)*<span class="number">4</span>;
-									<span class="keyword">var</span> wt = weights[cy*side+cx];
+								<span class="keyword">if</span> (scy &gt;= <span class="number">0</span> &amp;&amp; scy &lt; sh &amp;&amp; scx &gt;= <span class="number">0</span> &amp;&amp; scx &lt; sw) {
+									<span class="keyword">var</span> srcOff = (scy * sw + scx) * <span class="number">4</span>;
+									<span class="keyword">var</span> wt = weights[cy * side + cx];
 									r += src[srcOff] * wt;
-									g += src[srcOff+<span class="number">1</span>] * wt;
-									b += src[srcOff+<span class="number">2</span>] * wt;
-									a += src[srcOff+<span class="number">3</span>] * wt;
+									g += src[srcOff + <span class="number">1</span>] * wt;
+									b += src[srcOff + <span class="number">2</span>] * wt;
+									a += src[srcOff + <span class="number">3</span>] * wt;
 								}
 							}
 						}
-						dst[dstOff] = offset+r;
-						dst[dstOff+<span class="number">1</span>] = offset+g;
-						dst[dstOff+<span class="number">2</span>] = offset+b;
-						dst[dstOff+<span class="number">3</span>] = a + alphaFac*(<span class="number">255</span>-a);
+						dst[dstOff] = offset + r;
+						dst[dstOff + <span class="number">1</span>] = offset + g;
+						dst[dstOff + <span class="number">2</span>] = offset + b;
+						dst[dstOff + <span class="number">3</span>] = a + alphaFac * (<span class="number">255</span> - a);
 					}
 				}
-				<span class="keyword">this</span>.ctx.clearRect(<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>.width,<span class="keyword">this</span>.height);
-				<span class="keyword">this</span>.ctx.putImageData(output,<span class="number">0</span>,<span class="number">0</span>);
+				<span class="keyword">this</span>.ctx.clearRect(<span class="number">0</span>, <span class="number">0</span>, <span class="keyword">this</span>.width, <span class="keyword">this</span>.height);
+				<span class="keyword">this</span>.ctx.putImageData(output, <span class="number">0</span>, <span class="number">0</span>);
 			}
 			<span class="keyword">return</span> <span class="keyword">this</span>;
 		},</pre></div></div>
@@ -1681,11 +1741,11 @@ fall under the convolution matrix</p>
         </li>
         
         
-        <li id="section-68">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <h1>Class Method: blur</h1>
 <p>Apply box blur to the image.</p>
@@ -1696,21 +1756,21 @@ fall under the convolution matrix</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		blur:<span class="keyword">function</span>(level){
-			assert(level !== <span class="literal">undefined</span>,<span class="string">"Blur radius must be set."</span>);
-			<span class="keyword">var</span> len = level*level;
-			<span class="keyword">var</span> val = <span class="number">1</span>/len;
+            <div class="content"><div class='highlight'><pre>		blur: <span class="keyword">function</span>(level) {
+			assert(level !== <span class="literal">undefined</span>, <span class="string">"Blur radius must be set."</span>);
+			<span class="keyword">var</span> len = level * level;
+			<span class="keyword">var</span> val = <span class="number">1</span> / len;
 			<span class="keyword">var</span> matrix = [];
-			<span class="keyword">if</span>(len &lt; <span class="number">4</span>){</pre></div></div>
+			<span class="keyword">if</span> (len &lt; <span class="number">4</span>) {</pre></div></div>
             
         </li>
         
         
-        <li id="section-69">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p>if the length of the matrix is less than 4,
 it means that the blur radius is less than 2. There&#39;s no need to blur.</p>
@@ -1723,64 +1783,20 @@ it means that the blur radius is less than 2. There&#39;s no need to blur.</p>
         </li>
         
         
-        <li id="section-70">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <p>Fill up our convolution matrix with values</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">while</span>(len--){
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">while</span> (len--) {
 				matrix.push(val);
 			}
-			<span class="keyword">return</span> <span class="keyword">this</span>.convolute(matrix,<span class="number">0</span>,<span class="literal">false</span>);
-		},</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-71">
-            <div class="annotation">
-              
-              <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-71">&#182;</a>
-              </div>
-              <h1>Class Method: sharpen</h1>
-<p>Sharpen the image</p>
-<h2>Options</h2>
-<ul>
-<li><em>No options</em></li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>		sharpen:<span class="keyword">function</span>(){
-			<span class="keyword">return</span> <span class="keyword">this</span>.convolute([<span class="number">0</span>,-<span class="number">1</span>,<span class="number">0</span>,-<span class="number">1</span>,<span class="number">5</span>,-<span class="number">1</span>,<span class="number">0</span>,-<span class="number">1</span>,<span class="number">0</span>],<span class="number">0</span>,<span class="literal">false</span>);
-		},</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-72">
-            <div class="annotation">
-              
-              <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-72">&#182;</a>
-              </div>
-              <h1>Class Method: emboss</h1>
-<p>Emboss the image</p>
-<h2>Options</h2>
-<ul>
-<li><em>No options</em></li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>		emboss:<span class="keyword">function</span>(){
-			<span class="keyword">return</span> <span class="keyword">this</span>.convolute([<span class="number">2</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,-<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,-<span class="number">1</span>],<span class="number">127</span>,<span class="literal">false</span>);
+			<span class="keyword">return</span> <span class="keyword">this</span>.convolute(matrix, <span class="number">0</span>, <span class="literal">false</span>);
 		},</pre></div></div>
             
         </li>
@@ -1792,6 +1808,50 @@ it means that the blur radius is less than 2. There&#39;s no need to blur.</p>
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
+              <h1>Class Method: sharpen</h1>
+<p>Sharpen the image</p>
+<h2>Options</h2>
+<ul>
+<li><em>No options</em></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		sharpen: <span class="keyword">function</span>() {
+			<span class="keyword">return</span> <span class="keyword">this</span>.convolute([<span class="number">0</span>, -<span class="number">1</span>, <span class="number">0</span>, -<span class="number">1</span>, <span class="number">5</span>, -<span class="number">1</span>, <span class="number">0</span>, -<span class="number">1</span>, <span class="number">0</span>], <span class="number">0</span>, <span class="literal">false</span>);
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-74">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-74">&#182;</a>
+              </div>
+              <h1>Class Method: emboss</h1>
+<p>Emboss the image</p>
+<h2>Options</h2>
+<ul>
+<li><em>No options</em></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		emboss: <span class="keyword">function</span>() {
+			<span class="keyword">return</span> <span class="keyword">this</span>.convolute([<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, -<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, -<span class="number">1</span>], <span class="number">127</span>, <span class="literal">false</span>);
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-75">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
               <h1>Class Method: findEdges</h1>
 <p>Highlight the edges using a sobel filter.</p>
 <h2>Options</h2>
@@ -1801,11 +1861,11 @@ it means that the blur radius is less than 2. There&#39;s no need to blur.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		findEdges:<span class="keyword">function</span>(){
-			<span class="keyword">return</span> <span class="keyword">this</span>.convolute([-<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,-<span class="number">2</span>,<span class="number">0</span>,<span class="number">2</span>,-<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>],<span class="number">0</span>,<span class="literal">false</span>);
+            <div class="content"><div class='highlight'><pre>		findEdges: <span class="keyword">function</span>() {
+			<span class="keyword">return</span> <span class="keyword">this</span>.convolute([-<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, -<span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, -<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>], <span class="number">0</span>, <span class="literal">false</span>);
 		}
 	});
-	
+
 	window[<span class="string">'CanvasEffects'</span>] = fx;
 })(window);</pre></div></div>
             
