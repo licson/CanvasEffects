@@ -1084,45 +1084,6 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
               <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
-              <h1>Class Method: smoothNoise</h1>
-<p>Generating noise with smoothing</p>
-<h2>Options</h2>
-<ul>
-<li>same as <code>noise</code></li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>		smoothNoise: <span class="keyword">function</span>(amt, alphanoise){
-			<span class="keyword">var</span> self = <span class="keyword">this</span>;
-			assert(amt &gt;= <span class="number">0</span>, <span class="string">"Noise amount must be a positive number."</span>);
-			alphanoise = alphanoise || <span class="literal">false</span>;
-			<span class="keyword">var</span> lastRandoms = [<span class="number">0</span>];
-			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
-				<span class="keyword">var</span> thisRandom = m.random();
-				<span class="keyword">var</span> mean = <span class="number">0</span>;
-				lastRandoms.push(thisRandom);
-
-				<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; lastRandoms.length; i++) mean += lastRandoms[i];
-				mean /= lastRandoms.length;
-				mean = self.smoothStep(mean, <span class="number">0</span>, <span class="number">1</span>);
-
-				<span class="keyword">if</span>(lastRandoms.length &gt; <span class="number">10</span> + <span class="number">40</span> * thisRandom) lastRandoms = [mean * <span class="number">0.5</span>];
-
-				<span class="keyword">var</span> noise = -amt / <span class="number">2</span> + mean * amt * <span class="number">2</span>;
-				<span class="keyword">return</span> [r + noise, g + noise, b + noise, alphanoise ? a + noise : a];
-			});
-		},</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-45">
-            <div class="annotation">
-              
-              <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-45">&#182;</a>
-              </div>
               <h1>Class Method: glow</h1>
 <p>Make the image glows.</p>
 <h2>Options</h2>
@@ -1138,11 +1099,11 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-46">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>Blur it first</p>
 
@@ -1153,11 +1114,11 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-47">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>Apply a screen filter with the original image to make the glowing feel</p>
 
@@ -1178,11 +1139,11 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-48">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <h1>Class Method: colorMatrix</h1>
 <p>Apply a 5x5 colour matrix to the image</p>
@@ -1206,11 +1167,11 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-49">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <h1>Class Method: equalize</h1>
 <p>Equalize the image.</p>
@@ -1226,11 +1187,11 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-50">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p>Calculate the brightness first</p>
 
@@ -1248,11 +1209,11 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-51">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p>Then equalize the data</p>
 
@@ -1264,11 +1225,11 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-52">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p>Finally, change the brightness of every pixel</p>
 
@@ -1286,11 +1247,11 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
         </li>
         
         
-        <li id="section-53">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <h1>Class Method: TV</h1>
 <p>Adds old TV feel to the image.</p>
@@ -1301,7 +1262,35 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		tv: <span class="keyword">function</span>() {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>		tv: <span class="keyword">function</span>(nScanLines, fScanLineInt) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <p>Add same scanlines to the image</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">var</span> self = <span class="keyword">this</span>;
+
+			nScanLines = m.max(m.min(nScanLines, <span class="number">4096</span>), <span class="number">0</span>);
+
+			<span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a, x, y) {
+				<span class="keyword">var</span> s = m.sin(y / self.width * nScanLines);
+				<span class="keyword">var</span> c = m.cos(y / self.width * nScanLines);
+
+				<span class="keyword">var</span> cr = (r / <span class="number">255</span>) * s * fScanLineInt * <span class="number">255</span>;
+				<span class="keyword">var</span> cg = (g / <span class="number">255</span>) * c * fScanLineInt * <span class="number">255</span>;
+				<span class="keyword">var</span> cb = (b / <span class="number">255</span>) * s * fScanLineInt * <span class="number">255</span>;
+
+				<span class="keyword">return</span> [cr, cg, cb, a];
+			});</pre></div></div>
             
         </li>
         
@@ -1312,20 +1301,15 @@ The function will receive 6 parameters: <code>r</code>,<code>g</code>,<code>b</c
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
-              <p>Add same scanlines to the image
-TODO: Make the scanline level adjustable</p>
+              <p>Generate some noise on the image
+TODO: Improve the noise generation algorithm</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a, x, y) {
-				<span class="keyword">var</span> br = m.sin(y) * <span class="number">80</span>;
-				<span class="keyword">return</span> [
-					r - br,
-					g - br,
-					b - br,
-					a
-				];
-			});</pre></div></div>
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> <span class="keyword">this</span>.noise(<span class="number">50</span>);
+		},
+
+	});</pre></div></div>
             
         </li>
         
@@ -1336,24 +1320,6 @@ TODO: Make the scanline level adjustable</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
-              <p>Generate some noise on the image
-TODO: Improve the noise generation algorithm</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> <span class="keyword">this</span>.smoothNoise(<span class="number">50</span>);
-		}
-	});</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-56">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
-              </div>
               <p>Here are the adjustments</p>
 
             </div>
@@ -1363,11 +1329,11 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-57">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <h1>Class Method: hue</h1>
 <p>Adjust the hue or change the hue of an image.</p>
@@ -1398,18 +1364,18 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-58">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <h1>Class Method: saturation</h1>
 <p>Adjust the saturation or change the saturation of an image.</p>
 <h2>Options</h2>
 <ul>
-<li><code>sat</code> : The saturation adjustment</li>
-<li><code>colorize</code> : Whether to chang the saturation or to adjust the hue</li>
+<li><code>sat</code> : The saturation adjustment </li>
+<li><code>colorize</code> : Whether to chang the saturation or to adjust the saturation</li>
 </ul>
 
             </div>
@@ -1423,7 +1389,7 @@ TODO: Improve the noise generation algorithm</p>
 				<span class="keyword">if</span> (colorize) {
 					hsl.s = m.min(m.max(sat, <span class="number">0</span>), <span class="number">1</span>);
 				} <span class="keyword">else</span> {
-					hsl.s = m.min(m.max(hsl.s + sat, <span class="number">0</span>), <span class="number">1</span>);
+					hsl.s = m.min(m.max(hsl.s * sat, <span class="number">0</span>), <span class="number">1</span>);
 				}
 				<span class="keyword">var</span> rgb = self.toRGB(hsl.h, hsl.s, hsl.l);
 				<span class="keyword">return</span> [rgb.r, rgb.g, rgb.b, a];
@@ -1433,11 +1399,11 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-59">
+        <li id="section-58">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <h1>Class Method: brightness</h1>
 <p>Adjust the brightness of an image.</p>
@@ -1451,18 +1417,18 @@ TODO: Improve the noise generation algorithm</p>
             <div class="content"><div class='highlight'><pre>		brightness: <span class="keyword">function</span>(brightness) {
 			assert(brightness !== <span class="literal">undefined</span>, <span class="string">"Brightness must be set"</span>);
 			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
-				<span class="keyword">return</span> [r + brightness, g + brightness, b + brightness, a];
+				<span class="keyword">return</span> [r * brightness, g * brightness, b * brightness, a];
 			});
 		},</pre></div></div>
             
         </li>
         
         
-        <li id="section-60">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <h1>Class Method: contrast</h1>
 <p>Adjust the contrast of an image.</p>
@@ -1485,11 +1451,11 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-61">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-61">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <h1>Class Method: gamma</h1>
 <p>Adjust the gamma of an image.</p>
@@ -1503,18 +1469,18 @@ TODO: Improve the noise generation algorithm</p>
             <div class="content"><div class='highlight'><pre>		gamma: <span class="keyword">function</span>(gamma) {
 			assert(gamma !== <span class="literal">undefined</span>, <span class="string">"Gamma level must be set."</span>);
 			<span class="keyword">return</span> <span class="keyword">this</span>.process(<span class="keyword">function</span>(r, g, b, a) {
-				<span class="keyword">return</span> [r * gamma, g * gamma, b * gamma, a];
+				<span class="keyword">return</span> [r * gamma * gamma, g * gamma * gamma, b * gamma * gamma, a];
 			});
 		},</pre></div></div>
             
         </li>
         
         
-        <li id="section-62">
+        <li id="section-61">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <h1>Class Method: gammaRGB</h1>
 <p>Adjust the gamma of an image on different RGB channels.</p>
@@ -1537,11 +1503,11 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-63">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <h1>Class Method: vibrance</h1>
 <p>Adjust the vibrance of an image.</p>
@@ -1575,11 +1541,11 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-64">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <h1>Class Method: whiteBalance</h1>
 <p>Adjust the white balance of an image.</p>
@@ -1604,11 +1570,11 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-65">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p>Convolution effects</p>
 
@@ -1619,11 +1585,11 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-66">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <h1>Class Method: convolute</h1>
 <p>Apply a convolution matrix of any size to the image</p>
@@ -1659,11 +1625,11 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-67">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <p>pad output by the convolution matrix</p>
 
@@ -1677,11 +1643,11 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-68">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p>go through the destination image pixels</p>
 
@@ -1697,11 +1663,11 @@ TODO: Improve the noise generation algorithm</p>
         </li>
         
         
-        <li id="section-69">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p>calculate the weighed sum of the source image pixels that
 fall under the convolution matrix</p>
@@ -1741,11 +1707,11 @@ fall under the convolution matrix</p>
         </li>
         
         
-        <li id="section-70">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <h1>Class Method: blur</h1>
 <p>Apply box blur to the image.</p>
@@ -1766,11 +1732,11 @@ fall under the convolution matrix</p>
         </li>
         
         
-        <li id="section-71">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p>if the length of the matrix is less than 4,
 it means that the blur radius is less than 2. There&#39;s no need to blur.</p>
@@ -1783,11 +1749,11 @@ it means that the blur radius is less than 2. There&#39;s no need to blur.</p>
         </li>
         
         
-        <li id="section-72">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p>Fill up our convolution matrix with values</p>
 
@@ -1802,11 +1768,11 @@ it means that the blur radius is less than 2. There&#39;s no need to blur.</p>
         </li>
         
         
-        <li id="section-73">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <h1>Class Method: sharpen</h1>
 <p>Sharpen the image</p>
@@ -1824,11 +1790,11 @@ it means that the blur radius is less than 2. There&#39;s no need to blur.</p>
         </li>
         
         
-        <li id="section-74">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
               <h1>Class Method: emboss</h1>
 <p>Emboss the image</p>
@@ -1846,11 +1812,11 @@ it means that the blur radius is less than 2. There&#39;s no need to blur.</p>
         </li>
         
         
-        <li id="section-75">
+        <li id="section-74">
             <div class="annotation">
               
               <div class="pilwrap for-h1">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <h1>Class Method: findEdges</h1>
 <p>Highlight the edges using a sobel filter.</p>

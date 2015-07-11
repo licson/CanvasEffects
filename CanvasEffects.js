@@ -511,32 +511,6 @@
 				return [r + noise, g + noise, b + noise, alphanoise ? a + noise : a];
 			});
 		},
-		//#Class Method: smoothNoise
-		//
-		//Generating noise with smoothing
-		//
-		//##Options
-		// - same as `noise`
-		smoothNoise: function(amt, alphanoise){
-			var self = this;
-			assert(amt >= 0, "Noise amount must be a positive number.");
-			alphanoise = alphanoise || false;
-			var lastRandoms = [0];
-			return this.process(function(r, g, b, a) {
-				var thisRandom = m.random();
-				var mean = 0;
-				lastRandoms.push(thisRandom);
-
-				for(var i = 0; i < lastRandoms.length; i++) mean += lastRandoms[i];
-				mean /= lastRandoms.length;
-				mean = self.smoothStep(mean, 0, 1);
-
-				if(lastRandoms.length > 10 + 40 * thisRandom) lastRandoms = [mean * 0.5];
-
-				var noise = -amt / 2 + mean * amt * 2;
-				return [r + noise, g + noise, b + noise, alphanoise ? a + noise : a];
-			});
-		},
 		//#Class Method: glow
 		//
 		//Make the image glows.
@@ -612,23 +586,28 @@
 		//
 		//##Options
 		//  - No options
-		tv: function() {
+		tv: function(nScanLines, fScanLineInt) {
 			// Add same scanlines to the image
-			// TODO: Make the scanline level adjustable
+			var self = this;
+
+			nScanLines = m.max(m.min(nScanLines, 4096), 0);
+
 			this.process(function(r, g, b, a, x, y) {
-				var br = m.sin(y) * 80;
-				return [
-					r - br,
-					g - br,
-					b - br,
-					a
-				];
+				var s = m.sin(y / self.width * nScanLines);
+				var c = m.cos(y / self.width * nScanLines);
+
+				var cr = (r / 255) * s * fScanLineInt * 255;
+				var cg = (g / 255) * c * fScanLineInt * 255;
+				var cb = (b / 255) * s * fScanLineInt * 255;
+
+				return [cr, cg, cb, a];
 			});
 
 			// Generate some noise on the image
 			// TODO: Improve the noise generation algorithm
-			return this.smoothNoise(50);
-		}
+			return this.noise(50);
+		},
+
 	});
 
 	// Here are the adjustments
@@ -661,8 +640,8 @@
 		//Adjust the saturation or change the saturation of an image.
 		//
 		//##Options
-		//  - `sat` : The saturation adjustment
-		//  - `colorize` : Whether to chang the saturation or to adjust the hue
+		//  - `sat` : The saturation adjustment 
+		//  - `colorize` : Whether to chang the saturation or to adjust the saturation
 		saturation: function(sat, colorize) {
 			assert(sat !== undefined, "Saturation must be specified.")
 			var self = this;
@@ -672,7 +651,7 @@
 				if (colorize) {
 					hsl.s = m.min(m.max(sat, 0), 1);
 				} else {
-					hsl.s = m.min(m.max(hsl.s + sat, 0), 1);
+					hsl.s = m.min(m.max(hsl.s * sat, 0), 1);
 				}
 				var rgb = self.toRGB(hsl.h, hsl.s, hsl.l);
 				return [rgb.r, rgb.g, rgb.b, a];
@@ -687,7 +666,7 @@
 		brightness: function(brightness) {
 			assert(brightness !== undefined, "Brightness must be set");
 			return this.process(function(r, g, b, a) {
-				return [r + brightness, g + brightness, b + brightness, a];
+				return [r * brightness, g * brightness, b * brightness, a];
 			});
 		},
 		//#Class Method: contrast
@@ -713,7 +692,7 @@
 		gamma: function(gamma) {
 			assert(gamma !== undefined, "Gamma level must be set.");
 			return this.process(function(r, g, b, a) {
-				return [r * gamma, g * gamma, b * gamma, a];
+				return [r * gamma * gamma, g * gamma * gamma, b * gamma * gamma, a];
 			});
 		},
 		//#Class Method: gammaRGB
